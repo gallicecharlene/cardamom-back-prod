@@ -11,7 +11,7 @@ CREATE TABLE "user" (
 CREATE TABLE "deck" (
     "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "title" VARCHAR(128) NOT NULL,
-    "user_id" INTEGER REFERENCE "user"("id"),
+    "user_id" INTEGER REFERENCES "user"("id"),
     "share_id" VARCHAR(64) NOT NULL UNIQUE,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ
@@ -21,7 +21,7 @@ CREATE TABLE "flashcard" (
     "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "title_front" VARCHAR NOT NULL,
     "title_back" VARCHAR NOT NULL,
-    "deck_id" INTEGER REFERENCE "deck_id"("id"),
+    "deck_id" INTEGER REFERENCES "deck"("id"),
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ
 );
