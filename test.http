@@ -1,0 +1,10 @@
+@endpoint=http://localhost:{{$dotenv PORT}}/api
+
+### POST test authentification
+POST {{endpoint}}/login
+Content-Type: application/json
+
+{
+    "email": "user.rat@cardamom.com",
+    "password": "abcdef"
+}
