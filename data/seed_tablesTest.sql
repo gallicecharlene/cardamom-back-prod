@@ -5,7 +5,7 @@
 INSERT INTO "user" ( "pseudo", "email", "password")
 
 VALUES
-( 'hamsterx3', 'user.hamster@cardamom.com', '123456' ),
+( 'hamster<3powerForce', 'user.hamster@cardamom.com', '123456' ),
 ( 'rat2d2', 'user.rat@cardamom.com', 'abcdef');
 
 --DECK --
@@ -22,7 +22,8 @@ VALUES
 INSERT INTO "deck" ( "title", "share_id", "user_id")
 
 VALUES
-('[TEST]vocab portugais', '123456abcdef', 1 );
+('[TEST]vocab portugais', '123456abcdef', 1 ),
+('[TEST]vocab néerlandais', '7891011ghijkl', 2 );
 
 --FLASHCARD --
 
@@ -44,13 +45,35 @@ VALUES
 ('voiture', 'carro', 1),
 ('pamplemousse', 'toranja', 1),
 ('frontière', 'fronteira', 1),
-('se reposer', 'descansar', 1);
+('se reposer', 'descansar', 1),
+('mémoire', 'geheugen', 2),
+('jouer', 'spelen', 2),
+('épice', 'het kruid', 2),
+('carte', 'kaart', 2),
+('maman', 'moeder', 2),
+('moment', 'moment', 2),
+('boire', 'drinken', 2),
+('merci', 'bedankt', 2),
+('vague', 'golf', 2),
+('saucisse', 'worst', 2),
+('coder', 'coderen', 2),
+('important', 'belangrijk', 2),
+('apéro', 'het aperitief', 2),
+('pamplemousse', 'pompelmoes', 2),
+('le repas', 'de maaltijd', 2),
+('se reposer', 'uitrusten', 2),
+('émotion', 'émotie', 2),
+('amour', 'liefde', 2),
+('la culture', 'de cultuur', 2),
+('la rue', 'de straat', 2),
+('regarder', 'kijken', 2);
 
 -- DECK HAS USER ou consulte --
 INSERT INTO "deck_has_user" ("user_id", "deck_id")
 
 VALUES
-(1, 1);
+(1, 1),
+(2, 2);
 
 -- stats ou progresse Pas de Seed pour l'instant, nécessite de vrais utilisateurs et fonctionnalité overview--
 
