@@ -20,6 +20,7 @@ const flashcardController = {
         }
     },
 
+    // cette méthode est-elle nécessaire du coup?
     async getOne(req, res, next) {
         try {
             const flashcard = await Flashcard.findByPk(req.params.flashcardId);
