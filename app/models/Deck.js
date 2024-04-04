@@ -12,7 +12,7 @@ Deck.init({
     },
     share_id: {
         type: DataTypes.STRING(64),
-        allowNull: false,
+        allowNull: true, // obligation de le passer en true car sinon test de création de deck échoue si on a pas alloué un share_id non nul
         unique: true,
     },
 

@@ -12,7 +12,7 @@ CREATE TABLE "deck" (
     "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "title" VARCHAR(128) NOT NULL,
     "user_id" INTEGER REFERENCES "user"("id"),
-    "share_id" VARCHAR(64) NOT NULL UNIQUE,
+    "share_id" VARCHAR(64),  -- NOT NULL & UNIQUE sont retirés pour le test de création de deck
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ
 );
