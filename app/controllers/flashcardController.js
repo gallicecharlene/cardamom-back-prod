@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Flashcard } from '../models/index.js';
+import { Flashcard, Deck } from '../models/index.js';
 
 // schema de validation
 
@@ -24,8 +24,9 @@ const flashcardController = {
     async getOne(req, res, next) {
         try {
             const flashcard = await Flashcard.findByPk(req.params.flashcardId);
+            const deck = await Deck.findByPk(req.params.deckdId);
 
-            if (!flashcard) {
+            if (!flashcard || !deck) {
                 // Si deck inexistant, on envoie une erreur et on passe au middleware suivant
                 next();
                 return;

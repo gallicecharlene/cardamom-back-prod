@@ -37,8 +37,8 @@ router.patch('/api/decks/:deckId', deckController.update); // Mettre à jour un 
 router.delete('/api/decks/:deckId', deckController.delete); // Supprimer un deck spécifique
 
 router.post('/api/flashcards', flashcardController.create); // Créer une flashcard
-router.patch('/api/flashcards/:flashcardsId', flashcardController.update); // Modifier une flashcard depuis son ID (DECK ID OBLIGATOIRE)
-router.delete('/api/flashcards/:flashcardsId', flashcardController.delete); // Supprimer une flashcard spécifique
+router.patch('/api/flashcards/:flashcardId', flashcardController.update); // Modifier une flashcard depuis son ID (DECK ID OBLIGATOIRE)
+router.delete('/api/flashcards/:flashcardId', flashcardController.delete); // Supprimer une flashcard spécifique
 
 router.get('/api/stats'); // Récupérer les stats de tous les decks confondus
 router.get('/api/decks/:deckId/stats'); // Récupérer les stats d'un deck
