@@ -1,10 +1,41 @@
 @endpoint=http://localhost:{{$dotenv PORT}}/api
 
 ### POST test authentification
-POST {{endpoint}}/login
+POST {{endpoint}}/auth/login
 Content-Type: application/json
 
 {
-    "email": "user.rat@cardamom.com",
-    "password": "abcdef"
+    "email": "chach74@live.fr",
+    "password": "123456"
 }
+
+### POST création d'un utilisateur (test avec bon mail valide)
+POST {{endpoint}}/profile
+Content-Type: application/json
+
+{
+    "pseudo": "test5",
+    "email": "cha1@cha.fr",
+    "password": "123456"
+}
+
+### POST création d'un utilisateur (test avec mauvais mail)
+POST {{endpoint}}/profile
+Content-Type: application/json
+
+{
+    "pseudo": "test4",
+    "email": "chachlive.fr",
+    "password": "123456"
+}
+
+### POST modification d'un user
+PATCH {{endpoint}}/profile/10
+Content-Type: application/json
+    
+{
+    "pseudo": "test3",
+    "email": "chach74@live.fr",
+    "password": "123456"
+}
+   
