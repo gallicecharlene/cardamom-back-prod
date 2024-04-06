@@ -4,7 +4,9 @@ import { Flashcard, Deck } from '../models/index.js';
 // schema de validation
 
 const flashcardSchema = z.object({
-    title: z.string().min(1),
+    deck_id: z.number(),
+    title_front: z.string().min(1),
+    title_back: z.string().min(1),
 });
 
 const flashcardController = {
@@ -40,7 +42,7 @@ const flashcardController = {
 
     async create(req, res) {
         try {
-            const result = flashcardSchema.safeParse(req.body);
+            const result = flashcardSchema.safeParse(req.body); // le body doit au moins contenir title_front title_back et le deck_id
             if (!result.success) {
                 res.status(400).json(result.error);
                 return;
@@ -56,7 +58,7 @@ const flashcardController = {
 
     async update(req, res) {
         try {
-            // Récupération du deck spécifique à modifier
+            // Récupération de la flashcard spécifique à modifier
             const flashcard = await Flashcard.findByPk(req.params.flashcardId);
             if (!flashcard) {
                 res.status(404).send('La flashcard à modifier est introuvable');
@@ -67,7 +69,7 @@ const flashcardController = {
             if (!result.success) {
                 res.status(400).send('');
             }
-            // Update/modification du deck spécifique dont les données ont été validées
+            // Update/modification de la flahcard spécifique dont les données ont été validées
             await flashcard.update(result.data);
             res.json(flashcard);
         } catch (error) {
