@@ -4,7 +4,6 @@ export default async (req, res, next) => {
     try {
         // Extraction du jeton d'authentification de l'en-tête Authorization de la requête
         const token = req.headers.authorization.split(' ')[1];
-        console.log('token ==> ', token);
 
         // Vérification si le token existe
         if (!token) {
@@ -15,8 +14,6 @@ export default async (req, res, next) => {
 
         // Attribution des données décodées du token à la propriété user de l'objet req pour une utilisation ultérieure dans les middleware
         req.user = tokendecoded;
-        // console.log('ICI ==> ', req.user);
-        // console.log('ID ==> ', req.user.id);
 
         // Poursuite de l'exécution de la requête en appelant la fonction next() pour passer au middleware suivant
         return next();

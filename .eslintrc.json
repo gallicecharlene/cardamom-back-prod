@@ -11,6 +11,8 @@
     "rules": {
         "import/extensions" : "off",
         "indent": ["error", 4],
-        "max-len": "off"
+        "max-len": "off",
+        "no-console": "off",
+        "prefer-destructuring": "off"
     }
 }

@@ -1,9 +1,17 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import validator from 'email-validator';
+import { z } from 'zod';
 import User from '../models/User.js';
 
-export default {
+// ! A revoir pour la gestion des erreurs zod (faire des messages personalisés? ou laisser comme ça?)
+const userSchema = z.object({
+    pseudo: z.string().min(3),
+    email: z.string().email(),
+    password: z.string().min(6),
+});
+
+const authController = {
 
     async login(req, res) {
         try {
@@ -36,29 +44,31 @@ export default {
     },
     async create(req, res) {
         try {
-            const {
-                pseudo, email, password,
-            } = req.body;
+            const result = userSchema.safeParse(req.body);
 
-            if (!pseudo || !email || !password) {
+            if (!result.success) {
                 return res.status(400).json({ error: 'Veuillez renseigner tous les champs' });
             }
             // check if email is valid
-            if (!validator.validate(email)) {
+            if (!validator.validate(result.data.email)) {
                 return res.status(400).json({ error: "L'adresse email n'est pas valide" }); // (/!\affiche le mess d'erreur que si '@' manquant)
             }
             // verify if user exist in BDD
-            const userExists = await User.findOne({ where: { email } });
+            const userExists = await User.findOne({ where: { email: result.data.email } });
             if (userExists) {
                 return res.status(400).json({ error: 'Cet email est déjà enregistré' });
             }
-            const passwordHash = await bcrypt.hash(password, parseInt(process.env.NB_OF_SALT_ROUNDS));
+            const passwordHash = await bcrypt.hash(result.data.password, parseInt(process.env.NB_OF_SALT_ROUNDS));
+            console.log('password', passwordHash);
 
             const user = await User.create({
-                pseudo,
-                email,
+                pseudo: result.data.pseudo,
+                email: result.data.email,
                 password: passwordHash,
             });
+
+            console.log('ici', user);
+
             const token = jwt.sign({
                 id: user.id, // L'identifiant de l'utilisateur
                 pseudo: user.pseudo, // Le pseudo
@@ -74,6 +84,7 @@ export default {
 
     async getOne(req, res) {
         try {
+            // Récupération de l'id de l'utilisateur via le token
             const { id } = req.user;
             if (!id) {
                 return res.status(400).json({ error: 'Invalid parameter id' });
@@ -90,25 +101,31 @@ export default {
 
     async update(req, res) {
         try {
+            // Récupération de l'id de l'utilisateur via le token
             const { id } = req.user;
-            if (!id) {
-                return res.status(400).json({ error: 'Invalid parameter id' });
+
+            // Vérification de l'existance de l'utilisateur
+            const user = await User.findByPk(id);
+            if (!user) {
+                return res.status(404).json('L utilisateur est introuvable');
             }
 
-            // hash password, if a new password
-            if (req.body.password) {
-                req.body.password = await bcrypt.hash(req.body.password, parseInt(process.env.NB_OF_SALT_ROUNDS));
+            // Récupération et validation des données modifiées
+            const result = userSchema.safeParse(req.body);
+
+            if (!result.success) {
+                res.status(400).json({ error: 'Veuillez renseigner tous les champs' });
             }
 
-            const [nbUpdated, dataUpdated] = await User.update(req.body, {
-                where: { id },
-                returning: true,
-            });
-
-            if (nbUpdated === 0) {
-                return res.status(404).json({ error: 'User not found' });
+            // Si le password est modifié, on le hash
+            if (result.data.password) {
+                result.data.password = await bcrypt.hash(result.data.password, parseInt(process.env.NB_OF_SALT_ROUNDS));
             }
-            return res.status(200).json({ user: dataUpdated[0] });
+
+            // Mise à jour de l'utilisateur en BDD
+            const updatedUser = await user.update(result.data);
+
+            return res.status(200).json(updatedUser);
         } catch (error) {
             return res.status(500).json({ error: 'Internal server error' });
         }
@@ -132,3 +149,5 @@ export default {
     },
 
 };
+
+export default authController;

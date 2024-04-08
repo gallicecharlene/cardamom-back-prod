@@ -1,7 +1,5 @@
 import { Router } from 'express';
-// import jwt from 'jsonwebtoken';
 import authController from './controllers/authController.js';
-// import userController from './controllers/userController.js';
 import authJwt from './middlewares/authJwt.js';
 
 const router = Router();
