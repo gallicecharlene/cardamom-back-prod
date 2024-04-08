@@ -65,6 +65,7 @@ export default {
                 email: user.email, // L'email
             }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIME_EXPIRE }); // La clé secrête et le temps d'expiration du token
 
+            // console.log(user, token);
             return res.status(201).json({ user, token });
         } catch (error) {
             return res.status(500).json({ error: 'Internal server error' });

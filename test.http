@@ -5,23 +5,23 @@ POST {{endpoint}}/auth/login
 Content-Type: application/json
 
 {
-    "email": "toto@toto.fr",
-    "password": "toto"
+    "email": "maia2@maia.fr",
+    "password": "123456"
 }
 
 ### POST création d'un utilisateur (test avec bon mail valide)
 ### et génération du token
-POST {{endpoint}}/profile
+POST {{endpoint}}/auth/signup
 Content-Type: application/json
 
 {
-    "pseudo": "toto",
-    "email": "toto@toto.fr",
+    "pseudo": "maia7",
+    "email": "maia7@maia.fr",
     "password": "123456"
 }
 
 ### POST création d'un utilisateur (test avec mauvais mail)
-POST {{endpoint}}/profile
+POST {{endpoint}}/auth/signup
 Content-Type: application/json
 
 {
@@ -42,9 +42,9 @@ Content-Type: application/json
 Authorization: Bearer {{$dotenv TOKEN}}
    
 {
-    "pseudo": "toto1",
-    "email": "toto@toto.fr",
-    "password": "toto1"
+    "pseudo": "maia78",
+    "email": "maia7@maia.fr",
+    "password": "123456"
 }
 
 ### DELETE supprimer un utilisateur via l'id du token

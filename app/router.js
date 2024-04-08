@@ -10,7 +10,7 @@ const router = Router();
 router.post('/api/auth/login', authController.login);
 
 // route pour créer un user et générer le token
-router.post('/api/profile', authController.create);
+router.post('/api/auth/signup', authController.create);
 
 // route profile avec vérification du token
 router.get('/api/profile', authJwt, authController.getOne);
