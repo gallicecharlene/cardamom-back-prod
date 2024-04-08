@@ -5,17 +5,18 @@ POST {{endpoint}}/auth/login
 Content-Type: application/json
 
 {
-    "email": "chach74@live.fr",
-    "password": "123456"
+    "email": "toto@toto.fr",
+    "password": "toto"
 }
 
 ### POST création d'un utilisateur (test avec bon mail valide)
+### et génération du token
 POST {{endpoint}}/profile
 Content-Type: application/json
 
 {
-    "pseudo": "test5",
-    "email": "cha1@cha.fr",
+    "pseudo": "toto",
+    "email": "toto@toto.fr",
     "password": "123456"
 }
 
@@ -29,13 +30,23 @@ Content-Type: application/json
     "password": "123456"
 }
 
-### POST modification d'un user
-PATCH {{endpoint}}/profile/10
+### GET récupération d'un utilisateurs via l'id du token
+GET {{endpoint}}/profile
 Content-Type: application/json
-    
-{
-    "pseudo": "test3",
-    "email": "chach74@live.fr",
-    "password": "123456"
-}
+Authorization: Bearer {{$dotenv TOKEN}}
+
+
+### PATCH modification d'un user via l'id du token 
+PATCH {{endpoint}}/profile
+Content-Type: application/json
+Authorization: Bearer {{$dotenv TOKEN}}
    
+{
+    "pseudo": "toto1",
+    "email": "toto@toto.fr",
+    "password": "toto1"
+}
+
+### DELETE supprimer un utilisateur via l'id du token
+DELETE {{endpoint}}/profile
+Authorization: Bearer {{$dotenv TOKEN}}

@@ -14,6 +14,8 @@ export default async (req, res, next) => {
 
         // Attribution des données décodées du jeton à la propriété user de l'objet req pour une utilisation ultérieure dans les middleware
         req.user = tokendecoded;
+        console.log('ICI ==> ', req.user);
+        console.log('ID ==> ', req.user.id);
 
         // Poursuite de l'exécution de la requête en appelant la fonction next() pour passer au middleware suivant
         return next();
