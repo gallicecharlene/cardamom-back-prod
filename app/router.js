@@ -1,35 +1,17 @@
 import { Router } from 'express';
-import jwt from 'jsonwebtoken';
 import deckController from './controllers/deckController.js';
 import flashcardController from './controllers/flashcardController.js';
+import authController from './controllers/authController.js';
+import authJwt from './middlewares/authJwt.js';
 
 const router = Router();
 
-router.get('/', (req, res) => {
-    res.send('Hello World');
-});
-router.get('/jwt', (req, res) => {
-    const createToken = (jsonData = {}) => {
-        try {
-            const secretKey = 'test';
-            const token = jwt.sign(jsonData, secretKey);
-            return token;
-        } catch (error) {
-            console.log('error', error.message);
-            return null;
-        }
-    };
 
-    const jsonData = { email: 'test@test.fr', password: 'test1234' }; // req.body
-    const token = createToken(jsonData);
 
-    if (token) {
-        res.json({ status: true, token });
-    }
-    res.json({ status: false });
-});
+// route profile avec vérification du token
 
-router.get('/api/decks/test'); // Récupération du deck d'essai (deck de test)  -------- Comment gérer la récup d'un deck sans user?
+
+router.get('/api/decks/test'); // Récupération du deck d'essai (deck de test)
 router.get('/api/decks', deckController.getAll); // Récupérer tous les decks du User
 router.get('/api/decks/:deckId', deckController.getOne); // Récupérer un deck spécifique via son ID + récup toutes ses flashcards
 router.post('/api/decks', deckController.create); // Créer un deck
@@ -43,12 +25,15 @@ router.delete('/api/flashcards/:flashcardId', flashcardController.delete); // Su
 router.get('/api/stats'); // Récupérer les stats de tous les decks confondus
 router.get('/api/decks/:deckId/stats'); // Récupérer les stats d'un deck
 
-router.post('/api/auth/login'); // Se connecter
-router.post('/api/auth/signup'); // S'inscrire
+// route login et génération du token
+router.post('/api/auth/login', authController.login);
 
-router.get('/api/profil'); // Récupérer sa page de profil
-router.patch('/api/profil'); // Modifier son profil
-router.delete('/api/profil'); // Supprimer son profil
+// route pour créer un user et générer le token
+router.post('/api/auth/signup', authController.create);
+
+router.get('/api/profile', authJwt, authController.getOne);
+router.patch('/api/profile', authJwt, authController.update);
+router.delete('/api/profile', authJwt, authController.delete);
 
 // + la route modifier les stats (au vu de l'appel API depuis l'UserFlow)
 // + la route récupérer une flashcard
