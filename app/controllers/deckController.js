@@ -5,6 +5,7 @@ import { Deck } from '../models/index.js';
 
 const deckSchema = z.object({
     title: z.string().min(1),
+    user_id: z.number(),
 });
 
 const deckController = {
