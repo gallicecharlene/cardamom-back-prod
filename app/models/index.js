@@ -3,6 +3,7 @@
 import User from './User.js';
 import Deck from './Deck.js';
 import Flashcard from './Flashcard.js';
+import Stats from './Stats.js';
 import sequelize from '../db/client.js';
 
 User.hasMany(Deck, {
@@ -57,5 +58,6 @@ export {
     User,
     Deck,
     Flashcard,
+    Stats,
     sequelize,
 };

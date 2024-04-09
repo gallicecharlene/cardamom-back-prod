@@ -3,13 +3,11 @@ import deckController from './controllers/deckController.js';
 import flashcardController from './controllers/flashcardController.js';
 import authController from './controllers/authController.js';
 import authJwt from './middlewares/authJwt.js';
+import statsController from './controllers/statsController.js';
 
 const router = Router();
 
-
-
 // route profile avec vérification du token
-
 
 router.get('/api/decks/test'); // Récupération du deck d'essai (deck de test)
 router.get('/api/decks', deckController.getAll); // Récupérer tous les decks du User
@@ -22,8 +20,11 @@ router.post('/api/flashcards', flashcardController.create); // Créer une flashc
 router.patch('/api/flashcards/:flashcardId', flashcardController.update); // Modifier une flashcard depuis son ID (DECK ID OBLIGATOIRE)
 router.delete('/api/flashcards/:flashcardId', flashcardController.delete); // Supprimer une flashcard spécifique
 
-router.get('/api/stats'); // Récupérer les stats de tous les decks confondus
-router.get('/api/decks/:deckId/stats'); // Récupérer les stats d'un deck
+router.get('/api/stats', statsController.getAll); // Récupérer les stats de tous les decks confondus
+router.get('/api/decks/:deckId/stats', statsController.getOne); // Récupérer les stats d'un deck
+router.get('/api/decks/:deckId/stats', statsController.create); // initialiser un MemoTest (on associe une nouvelle stat à un deck)
+router.patch('/api/decks/:deckId/stats', statsController.update); // route d'incrémentation depuis la page MemoTest
+router.patch('/api/decks/:deckId/stats', statsController.delete); // éventuellement possibilité de supprimer les stats d'un deck depuis le deckId
 
 // route login et génération du token
 router.post('/api/auth/login', authController.login);
