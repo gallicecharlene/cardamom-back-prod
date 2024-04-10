@@ -36,9 +36,9 @@ CREATE TABLE "deck_has_user" (
 
 CREATE TABLE "stats" (
     "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "date" DATE NOT NULL,
-    "nb_card_consulted" INTEGER,
-    "nb_card_success" INTEGER,
+    "date" DATE,
+    "nb_card_consulted" INTEGER DEFAULT 0,
+    "nb_card_success" INTEGER DEFAULT 0,
     "user_id" INTEGER NOT NULL REFERENCES "user"("id"),
     "deck_id" INTEGER NOT NULL REFERENCES "deck"("id"),
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,

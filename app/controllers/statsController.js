@@ -1,12 +1,13 @@
 import { z } from 'zod';
-import { Stats } from '../models/index.js';
+import { Stats, User, Deck } from '../models/index.js';
 
 const statsSchema = z.object({
     nb_card_consulted: z.number(),
     nb_card_success: z.number(),
-    user_id: z.number(),
     deck_id: z.number(),
 });
+
+// ! CONTROLLER COMPLETEMENT A REVOIR, il y a une incohérence dans l'association de la table stats avec user
 
 const statsController = {
 
@@ -26,7 +27,7 @@ const statsController = {
         }
     },
     // récupérer les stats d'un deck d'un user
-    async getOne(req, res, next) {
+    async getOne(req, res) {
         try {
             // Récupération des stats d'un deck grace au deck_id
             const userId = req.user.id;
@@ -39,8 +40,6 @@ const statsController = {
             });
 
             if (!stats) {
-                // Si stats inexistant, on envoie une erreur et on passe au middleware suivant
-                next();
                 res.status(404).json({ error: 'Stat not found' });
                 return;
             }
@@ -54,6 +53,8 @@ const statsController = {
 
     async create(req, res) {
         try {
+            const userId = req.user.id;
+            const deckId = req.params.deckId;
             // on vérifie que le body respecte le schéma de validation de stats définit plus haut
             const result = statsSchema.safeParse(req.body); // body contenant nb_card_success , nb_card_consulted, deck_id, user_id
             if (!result.success) {
@@ -61,7 +62,21 @@ const statsController = {
                 return;
             }
             // si données validées, alors on peut générer un objet stats tel que prévu par les models Stats
-            const stats = await Stats.create(result.data);
+            const stats = await Stats.create({
+                nb_card_consulted: result.data.nb_card_consulted,
+                nb_card_success: result.data.nb_card_success,
+                user_id: userId,
+                deck_id: deckId,
+
+            }, {
+                include: [{
+                    model: User,
+                    as: 'stats_decks',
+                }, {
+                    model: Deck,
+                    as: 'stats_user',
+                }],
+            });
 
             res.json(stats);
         } catch (error) {
@@ -97,7 +112,13 @@ const statsController = {
             // stats.nb_card_consulted += 1;
             // stats.nb_card_success += 1;
             // si données validées, alors on peut modifier l'objet stats tel que prévu par les models Stats
-            await stats.update(result.data);
+            await stats.update({
+                nb_card_consulted: result.nb_card_consulted,
+                nb_card_success: result.nb_card_success,
+                deck_id: deckId,
+                user_id: userId,
+            });
+
             res.status(200).json(stats);
         } catch (error) {
             console.error(error);

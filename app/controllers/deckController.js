@@ -5,7 +5,6 @@ import { Deck } from '../models/index.js';
 
 const deckSchema = z.object({
     title: z.string().min(1),
-    user_id: z.number(),
 });
 
 const deckController = {
@@ -32,7 +31,7 @@ const deckController = {
             const deckId = req.params.deckId;
             const deck = await Deck.findOne({
                 where: {
-                    deck_id: deckId,
+                    id: deckId,
                     user_id: userId,
                 },
                 include: 'flashcards',
@@ -69,14 +68,20 @@ const deckController = {
     async create(req, res) {
         try {
             // Vérification de la validation des données créées
+            const userId = req.user.id;
             const result = deckSchema.safeParse(req.body);
             // Si elles ne correspondent pas au schema de validation, retourne erreur
             if (!result.success) {
                 res.status(400).json(result.error);
                 return;
             }
+
+            // const resultAnduserId = { ...result.data, user_id: userId };
             // Sinon création d'un nouveau deck dont les données sont validées
-            const deck = await Deck.create(result.data);
+            const deck = await Deck.create({
+                title: result.data.title,
+                user_id: userId,
+            });
 
             // deck créé renvoyé au client
             res.json(deck);
@@ -88,6 +93,7 @@ const deckController = {
 
     async update(req, res) {
         try {
+            const userId = req.user.id;
             // Récupération du deck spécifique à modifier
             const deck = await Deck.findByPk(req.params.deckId);
             if (!deck) {
@@ -100,7 +106,10 @@ const deckController = {
                 res.status(400).send('');
             }
             // Update/modification du deck spécifique dont les données ont été validées
-            await deck.update(result.data);
+            await deck.update({
+                title: result.data.title,
+                user_id: userId,
+            });
             res.json(deck);
         } catch (error) {
             console.error(error);

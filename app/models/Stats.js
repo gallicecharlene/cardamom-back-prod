@@ -7,7 +7,7 @@ class Stats extends Model {}
 Stats.init({
     date: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
     },
     nb_card_consulted: {
         type: DataTypes.INTEGER,

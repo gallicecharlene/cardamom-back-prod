@@ -22,9 +22,9 @@ router.delete('/api/flashcards/:flashcardId', authJwt, flashcardController.delet
 
 router.get('/api/stats', authJwt, statsController.getAll); // Récupérer les stats de tous les decks confondus
 router.get('/api/decks/:deckId/stats', authJwt, statsController.getOne); // Récupérer les stats d'un deck
-router.get('/api/decks/:deckId/stats', authJwt, statsController.create); // initialiser un MemoTest (on associe une nouvelle stat à un deck)
+router.post('/api/decks/:deckId/stats', authJwt, statsController.create); // initialiser un MemoTest (on associe une nouvelle stat à un deck)
 router.patch('/api/decks/:deckId/stats', authJwt, statsController.update); // route d'incrémentation depuis la page MemoTest
-router.patch('/api/decks/:deckId/stats', authJwt, statsController.delete); // éventuellement possibilité de supprimer les stats d'un deck depuis le deckId
+router.delete('/api/decks/:deckId/stats', authJwt, statsController.delete); // éventuellement possibilité de supprimer les stats d'un deck depuis le deckId
 
 // route login et génération du token
 router.post('/api/auth/login', authController.login);
