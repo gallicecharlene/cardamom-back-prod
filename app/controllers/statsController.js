@@ -13,9 +13,10 @@ const statsController = {
     // récupérer toutes les stats de tous les decks d'un seul user
     async getAll(req, res) {
         try {
+            const userId = req.user.id;
             const stats = await Stats.findAll({
                 where: {
-                    // user_id: user_id
+                    user_id: userId,
                 },
             });
             res.json(stats);
@@ -28,11 +29,12 @@ const statsController = {
     async getOne(req, res, next) {
         try {
             // Récupération des stats d'un deck grace au deck_id
+            const userId = req.user.id;
             const deckId = req.params.deckId;
             const stats = await Stats.findOne({
                 where: {
                     deck_id: deckId,
-                    // user_id: userId,
+                    user_id: userId,
                 },
             });
 
@@ -72,11 +74,12 @@ const statsController = {
     async update(req, res) {
         try {
             // Récupération des stats spécifiques au deck à modifier
+            const userId = req.user.id;
             const deckId = req.params.deckId;
             const stats = await Stats.findOne({
                 where: {
                     deck_id: deckId,
-                    // user_id: userId,
+                    user_id: userId,
                 },
             });
             // Si stats inexistant, erreur
@@ -105,11 +108,12 @@ const statsController = {
     // méthode non utile pour l'instant
     async delete(req, res) {
         try {
+            const userId = req.user.id;
             const deckId = req.params.deckId;
             const stats = await Stats.findOne({
                 where: {
                     deck_id: deckId,
-                    // user_id: userId,
+                    user_id: userId,
                 },
             });
             if (!stats) {
