@@ -12,7 +12,12 @@ const deckController = {
 
     async getAll(req, res) {
         try {
-            const decks = await Deck.findAll();
+            const userId = req.user.id;
+            const decks = await Deck.findAll({
+                where: {
+                    user_id: userId,
+                },
+            });
             res.json(decks);
         } catch (error) {
             console.trace(error);
@@ -23,10 +28,12 @@ const deckController = {
     async getOne(req, res, next) {
         try {
             // Récupération d'un deck en associant les flashcards liées à son Id
+            const userId = req.user.id;
             const deckId = req.params.deckId;
             const deck = await Deck.findOne({
                 where: {
-                    id: deckId,
+                    deck_id: deckId,
+                    user_id: userId,
                 },
                 include: 'flashcards',
             });
