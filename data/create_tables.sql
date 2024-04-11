@@ -5,12 +5,21 @@ CREATE TABLE "user" (
 );
 
 CREATE TABLE "deck" (
-    "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY, "title" VARCHAR(128) NOT NULL, "user_id" INTEGER NOT NULL REFERENCES "user" ("id"), "share_id" VARCHAR(64), -- NOT NULL & UNIQUE sont retirés pour le test de création de deck
-    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP, "updated_at" TIMESTAMPTZ
+    "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    "title" VARCHAR(128) NOT NULL,
+    "user_id" INTEGER NOT NULL REFERENCES "user"("id"),
+    "share_id" VARCHAR(64) NOT NULL,  
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ
 );
 
 CREATE TABLE "flashcard" (
-    "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY, "title_front" VARCHAR NOT NULL, "title_back" VARCHAR NOT NULL, "deck_id" INTEGER NOT NULL REFERENCES "deck" ("id"), "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP, "updated_at" TIMESTAMPTZ
+    "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    "title_front" VARCHAR NOT NULL,
+    "title_back" VARCHAR NOT NULL,
+    "deck_id" INTEGER NOT NULL REFERENCES "deck"("id"),
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ
 );
 
 CREATE TABLE "deck_has_user" (
