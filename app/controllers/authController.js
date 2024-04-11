@@ -30,6 +30,13 @@ const authController = {
             if (!isPasswordValid) {
                 return res.status(401).json({ error: 'User or password incorrect' });
             }
+            // Créer un objet utilisateur sans le mot de passe
+            const userWithoutPassword = {
+                id: user.id,
+                pseudo: user.pseudo,
+                email: user.email,
+            };
+
             // Si tout est ok, signature du token (on génère un token)
             const token = jwt.sign({
                 id: user.id, // L'identifiant de l'utilisateur
@@ -37,7 +44,8 @@ const authController = {
                 email: user.email, // L'email
             }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIME_EXPIRE }); // La clé secrête et le temps d'expiration du token
 
-            return res.status(200).json({ token });
+            // Renvoyer le token et l'utilisateur sans le mot de passe
+            return res.status(200).json({ token, user: userWithoutPassword });
         } catch (error) {
             return res.status(500).json({ error: 'Internal server error' });
         }
@@ -45,6 +53,7 @@ const authController = {
     async create(req, res) {
         try {
             const result = userSchema.safeParse(req.body);
+            console.log(result);
 
             if (!result.success) {
                 return res.status(400).json({ error: 'Veuillez renseigner tous les champs' });
@@ -61,55 +70,32 @@ const authController = {
             const passwordHash = await bcrypt.hash(result.data.password, parseInt(process.env.NB_OF_SALT_ROUNDS));
             console.log('password', passwordHash);
 
-            const user = await User.create({
+            await User.create({
                 pseudo: result.data.pseudo,
                 email: result.data.email,
                 password: passwordHash,
             });
 
-            console.log('ici', user);
-
-            const token = jwt.sign({
-                id: user.id, // L'identifiant de l'utilisateur
-                pseudo: user.pseudo, // Le pseudo
-                email: user.email, // L'email
-            }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIME_EXPIRE }); // La clé secrête et le temps d'expiration du token
-
-            // console.log(user, token);
-            return res.status(201).json({ user, token });
+            return res.status(201).json({ message: 'User created' });
         } catch (error) {
             return res.status(500).json({ error: 'Internal server error' });
         }
     },
 
     async getOne(req, res) {
-        try {
-            // Récupération de l'id de l'utilisateur via le token
-            const { id } = req.user;
-            if (!id) {
-                return res.status(400).json({ error: 'Invalid parameter id' });
-            }
-            const user = await User.findOne({ where: { id } });
-            if (!user) {
-                return res.status(404).json({ error: 'User not found' });
-            }
-            return res.status(200).json({ user });
-        } catch (error) {
-            return res.status(500).json({ error: 'Internal server error' });
-        }
+        return res.status(200).json({
+            user: {
+                id: req.user.id,
+                pseudo: req.user.pseudo,
+                email: req.user.email,
+            },
+        });
     },
 
     async update(req, res) {
         try {
-            // Récupération de l'id de l'utilisateur via le token
-            const { id } = req.user;
-
-            // Vérification de l'existance de l'utilisateur
-            const user = await User.findByPk(id);
-            if (!user) {
-                return res.status(404).json('L utilisateur est introuvable');
-            }
-
+            // Récupérer l'utilisateur connecté
+            const user = req.user;
             // Récupération et validation des données modifiées
             const result = userSchema.safeParse(req.body);
 
@@ -125,7 +111,13 @@ const authController = {
             // Mise à jour de l'utilisateur en BDD
             const updatedUser = await user.update(result.data);
 
-            return res.status(200).json(updatedUser);
+            return res.status(200).json({
+                updatedUser: {
+                    id: updatedUser.id,
+                    pseudo: updatedUser.pseudo,
+                    email: updatedUser.email,
+                },
+            });
         } catch (error) {
             return res.status(500).json({ error: 'Internal server error' });
         }
@@ -133,15 +125,11 @@ const authController = {
 
     async delete(req, res) {
         try {
-            const { id } = req.user;
-            if (!id) {
-                return res.status(400).json({ error: 'Invalid parameter id' });
-            }
-            const user = await User.findOne({ where: { id } });
-            if (!user) {
-                return res.status(404).json({ error: 'User not found' });
-            }
-            await user.destroy();
+            const user = req.user;
+
+            await user.destroy({
+                where: { id: user.id },
+            });
             return res.status(200).json({ message: 'User deleted' });
         } catch (error) {
             return res.status(500).json({ error: 'Internal server error' });

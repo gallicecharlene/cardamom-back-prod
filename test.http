@@ -5,18 +5,17 @@ POST {{endpoint}}/auth/login
 Content-Type: application/json
 
 {
-    "email": "maia2@maia.fr",
+    "email": "maia77778@maia.fr",
     "password": "123456"
 }
 
 ### POST création d'un utilisateur (test avec bon mail valide)
-### et génération du token
 POST {{endpoint}}/auth/signup
 Content-Type: application/json
 
 {
-    "pseudo": "maia2",
-    "email": "maia2@maia.fr",
+    "pseudo": "maia77778",
+    "email": "maia77778@maia.fr",
     "password": "123456"
 }
 
@@ -42,8 +41,8 @@ Content-Type: application/json
 Authorization: Bearer {{$dotenv TOKEN}}
    
 {
-    "pseudo": "maia2",
-    "email": "maia2@maia.fr",
+    "pseudo": "maia888",
+    "email": "maia77778@maia.fr",
     "password": "123456"
 }
 
