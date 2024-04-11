@@ -15,6 +15,7 @@ router.get('/api/decks/:deckId', authJwt, deckController.getOne); // Récupérer
 router.post('/api/decks', authJwt, deckController.create); // Créer un deck
 router.patch('/api/decks/:deckId', authJwt, deckController.update); // Mettre à jour un deck
 router.delete('/api/decks/:deckId', authJwt, deckController.delete); // Supprimer un deck spécifique
+router.get('/api/decks/:shareId', authJwt, deckController.getOneShared); // Récupérer un deck spécifique via son share_id
 
 router.post('/api/flashcards', authJwt, flashcardController.create); // Créer une flashcard
 router.patch('/api/flashcards/:flashcardId', authJwt, flashcardController.update); // Modifier une flashcard depuis son ID (DECK ID OBLIGATOIRE)
