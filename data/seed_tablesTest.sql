@@ -22,8 +22,8 @@ VALUES
 INSERT INTO "deck" ( "title", "share_id", "user_id")
 
 VALUES
-('[TEST]vocab portugais', '123456abcdef', 1 ),
-('[TEST]vocab néerlandais', '7891011ghijkl', 2 );
+('[TEST]vocab portugais', '65165163', 1 ),
+('[TEST]vocab néerlandais', '568465168', 2 );
 
 --FLASHCARD --
 

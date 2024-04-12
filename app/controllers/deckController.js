@@ -54,9 +54,7 @@ const deckController = {
                 return;
             }
             // res status 200
-
             res.json(deck);
-            // res.status(200).send('deck spécifique récupéré');  --> provoque erreur ERR_HTTP_HEADERS_SENT
 
             // res.json(flashcards);
         } catch (error) {
@@ -75,8 +73,9 @@ const deckController = {
                 res.status(400).json(result.error);
                 return;
             }
+
             const codeDate = Date.now();
-            const codeShareId = codeDate + result.data.title + userId;
+            const codeShareId = `${codeDate}${userId}`;
 
             // Sinon création d'un nouveau deck dont les données sont validées
             const deck = await Deck.create({
@@ -130,6 +129,33 @@ const deckController = {
             res.send('Deck supprimé');
         } catch (error) {
             console.error(error);
+            res.status(500).send('Internal Server Error');
+        }
+    },
+
+    async getOneShared(req, res, next) {
+        try {
+            // Récupération d'un deck en associant les flashcards liées à son share_id
+
+            const shareId = req.params.shareId;
+            const deckshared = await Deck.findOne({
+                where: {
+                    share_id: shareId,
+                },
+                include: 'flashcards',
+            });
+
+            if (!deckshared) {
+                // Si deck inexistant, on envoie une erreur et on passe au middleware suivant
+                next();
+                return;
+            }
+            // res status 200
+            res.json(deckshared);
+
+            // res.json(flashcards);
+        } catch (error) {
+            console.trace(error);
             res.status(500).send('Internal Server Error');
         }
     },
