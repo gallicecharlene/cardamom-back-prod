@@ -73,9 +73,8 @@ const deckController = {
                 res.status(400).json(result.error);
                 return;
             }
-
             const codeDate = Date.now();
-            const codeShareId = `${codeDate}${userId}`;
+            const codeShareId = codeDate + result.data.title + userId;
 
             // Sinon création d'un nouveau deck dont les données sont validées
             const deck = await Deck.create({

@@ -12,7 +12,7 @@ CREATE TABLE "deck" (
     "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "title" VARCHAR(128) NOT NULL,
     "user_id" INTEGER NOT NULL REFERENCES "user"("id"),
-    "share_id" VARCHAR(64) NOT NULL,
+    "share_id" VARCHAR(64) NOT NULL,  
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ
 );
