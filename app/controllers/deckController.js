@@ -75,7 +75,7 @@ const deckController = {
             }
 
             const codeDate = Date.now();
-            const codeShareId = codeDate + result.data.title + userId;
+            const codeShareId = `${codeDate}${userId}`;
 
             // Sinon création d'un nouveau deck dont les données sont validées
             const deck = await Deck.create({
@@ -138,20 +138,20 @@ const deckController = {
             // Récupération d'un deck en associant les flashcards liées à son share_id
 
             const shareId = req.params.shareId;
-            const deck = await Deck.findOne({
+            const deckshared = await Deck.findOne({
                 where: {
                     share_id: shareId,
                 },
                 include: 'flashcards',
             });
 
-            if (!deck) {
+            if (!deckshared) {
                 // Si deck inexistant, on envoie une erreur et on passe au middleware suivant
                 next();
                 return;
             }
             // res status 200
-            res.json(deck);
+            res.json(deckshared);
 
             // res.json(flashcards);
         } catch (error) {
