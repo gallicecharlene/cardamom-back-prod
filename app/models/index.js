@@ -37,7 +37,7 @@ User.belongsToMany(Deck, {
     through: 'deck_has_user',
     foreignKey: 'user_id',
     otherKey: 'deck_id',
-    as: 'consultation_deck',
+    as: 'importedDecks',
 });
 
 Deck.belongsToMany(User, {

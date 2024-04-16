@@ -17,7 +17,14 @@ const deckController = {
                     user_id: userId,
                 },
             });
-            res.json(decks);
+            // Récupérez tous les decks importés par l'utilisateur
+            const importedDecks = await req.user.getImportedDecks();
+
+            // Fusionnez les decks récupérés avec les decks importés
+            const allDecks = [...decks, ...importedDecks];
+
+            res.json(allDecks);
+            // res.json(decks);
         } catch (error) {
             console.trace(error);
             res.status(500).send('Internal Server Error');
@@ -75,7 +82,11 @@ const deckController = {
             }
 
             const codeDate = Date.now();
-            const codeShareId = `${codeDate}${userId}`;
+            // const codeShareId = `${codeDate}${userId}`;
+            // const codeShareId = `${codeDate}${userId}`;
+            // console.log('ici====>', codeShareId);
+            const codeShareId = `${codeDate}` + `${userId}`;
+            codeShareId.concat(...codeShareId);
 
             // Sinon création d'un nouveau deck dont les données sont validées
             const deck = await Deck.create({
@@ -135,31 +146,33 @@ const deckController = {
 
     async getOneShared(req, res, next) {
         try {
-            // Récupération d'un deck en associant les flashcards liées à son share_id
-
+            // Récupération du deck partagé associé au share_id
             const shareId = req.params.shareId;
-            const deckshared = await Deck.findOne({
+            const deckShared = await Deck.findOne({
                 where: {
                     share_id: shareId,
                 },
                 include: 'flashcards',
             });
 
-            if (!deckshared) {
-                // Si deck inexistant, on envoie une erreur et on passe au middleware suivant
+            if (!deckShared) {
+                // Si le deck n'existe pas, passez au middleware suivant
                 next();
                 return;
             }
-            // res status 200
-            res.json(deckshared);
 
-            // res.json(flashcards);
+            // Récupération de l'utilisateur actuel qui récupère le deck
+            const newUser = req.user;
+
+            // Ajout de l'association entre le nouvel utilisateur et le deck partagé
+            await newUser.addImportedDeck(deckShared);
+
+            res.status(200).json(deckShared);
         } catch (error) {
             console.trace(error);
             res.status(500).send('Internal Server Error');
         }
     },
-
 };
 
 export default deckController;
