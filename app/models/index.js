@@ -40,18 +40,24 @@ User.belongsToMany(Deck, {
     as: 'consultation_deck',
 });
 
-Deck.belongsToMany(User, {
-    through: 'stats',
-    foreignKey: 'deck_id',
-    otherKey: 'user_id',
+Stats.hasOne(Deck, {
+    foreignKey: 'stats_id',
+    as: 'stats_deck',
+});
+
+Deck.hasMany(Stats, {
+    foreignKey: 'stats_id',
+    as: 'stats_deck',
+});
+
+Stats.hasOne(User, {
+    foreignKey: 'stats_id',
     as: 'stats_user',
 });
 
-User.belongsToMany(Deck, {
-    through: 'stats',
-    foreignKey: 'user_id',
-    otherKey: 'deck_id',
-    as: 'stats_decks',
+User.hasMany(Stats, {
+    foreignKey: 'stats_id',
+    as: 'stats_user',
 });
 
 export {
