@@ -85,7 +85,7 @@ const deckController = {
             // const codeShareId = `${codeDate}${userId}`;
             // const codeShareId = `${codeDate}${userId}`;
             // console.log('ici====>', codeShareId);
-            const codeShareId = `${codeDate}` + `${userId}`;
+            const codeShareId = `${codeDate}${userId}`;
             codeShareId.concat(...codeShareId);
 
             // Sinon création d'un nouveau deck dont les données sont validées
