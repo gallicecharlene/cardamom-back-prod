@@ -18,7 +18,7 @@ const flashcardController = {
             res.json(flashcards);
         } catch (error) {
             console.trace(error);
-            res.status(500).send('Internal Server Error');
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     },
 
@@ -36,15 +36,15 @@ const flashcardController = {
             res.json(flashcard);
         } catch (error) {
             console.trace(error);
-            res.status(500).send('Internal Server Error');
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     },
 
     async create(req, res) {
         try {
-            const result = flashcardSchema.safeParse(req.body); // le body doit au moins contenir title_front title_back et le deck_id
+            const result = flashcardSchema.safeParse(req.body);
             if (!result.success) {
-                res.status(400).json(result.error);
+                res.status(400).json({ message: 'données non valides' }); // ou json(result.error);
                 return;
             }
             const flashcard = await Flashcard.create(result.data);
@@ -52,7 +52,7 @@ const flashcardController = {
             res.json(flashcard);
         } catch (error) {
             console.trace(error);
-            res.status(500).send('Internal Server Error');
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     },
 
@@ -61,20 +61,20 @@ const flashcardController = {
             // Récupération de la flashcard spécifique à modifier
             const flashcard = await Flashcard.findByPk(req.params.flashcardId);
             if (!flashcard) {
-                res.status(404).send('La flashcard à modifier est introuvable');
+                res.status(404).json({ message: 'La flashcard à modifier est introuvable' });
                 return;
             }
             // Vérification de la validation des données créées
             const result = flashcardSchema.safeParse(req.body);
             if (!result.success) {
-                res.status(400).send('');
+                res.status(400).json({ message: 'données non valides' });
             }
             // Update/modification de la flahcard spécifique dont les données ont été validées
             await flashcard.update(result.data);
             res.json(flashcard);
         } catch (error) {
             console.error(error);
-            res.status(500).send('Internal Server Error');
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     },
 
@@ -82,14 +82,14 @@ const flashcardController = {
         try {
             const flashcard = await Flashcard.findByPk(req.params.flashcardId);
             if (!flashcard) {
-                res.status(404).send('La flashcard à supprimer est introuvable');
+                res.status(404).json({ message: 'La flashcard à supprimer est introuvable' });
                 return;
             }
             await flashcard.destroy();
-            res.send('Flashcard supprimée');
+            res.json({ message: 'Flashcard supprimée' });
         } catch (error) {
             console.error(error);
-            res.status(500).send('Internal Server Error');
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     },
 };

@@ -23,7 +23,7 @@ const statsController = {
             res.json(stats);
         } catch (error) {
             console.trace(error);
-            res.status(500).send('Internal Server Error');
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     },
     // récupérer les stats d'un deck d'un user
@@ -47,7 +47,7 @@ const statsController = {
             res.status(200).json(stats);
         } catch (error) {
             console.trace(error);
-            res.status(500).send('Internal Server Error');
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     },
 
@@ -58,7 +58,7 @@ const statsController = {
             // on vérifie que le body respecte le schéma de validation de stats définit plus haut
             const result = statsSchema.safeParse(req.body); // body contenant nb_card_success , nb_card_consulted, deck_id, user_id
             if (!result.success) {
-                res.status(400).json(result.error);
+                res.status(400).json({ message: 'données non valides' }); // ou json(result.error);
                 return;
             }
             // si données validées, alors on peut générer un objet stats tel que prévu par les models Stats
@@ -81,7 +81,7 @@ const statsController = {
             res.json(stats);
         } catch (error) {
             console.trace(error);
-            res.status(500).send('Internal Server Error');
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     },
 
@@ -99,13 +99,13 @@ const statsController = {
             });
             // Si stats inexistant, erreur
             if (!stats) {
-                res.status(404).json({ error: 'stats not found' });
+                res.status(404).json({ message: 'les stats demandées sont introuvables' });
                 return;
             }
 
             const result = statsSchema.safeParse(req.body);
             if (!result.success) {
-                res.status(400).send('');
+                res.status(400).json({ message: 'données non valides' });
             }
 
             // incrémentation des statistiques du deck en cas de succès --> gestion côté front
@@ -122,7 +122,7 @@ const statsController = {
             res.status(200).json(stats);
         } catch (error) {
             console.error(error);
-            res.status(500).send('Internal Server Error');
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     },
 
@@ -138,14 +138,14 @@ const statsController = {
                 },
             });
             if (!stats) {
-                res.status(404).send('Les stats à supprimer sont introuvables');
+                res.status(404).json({ message: 'Les stats à supprimer sont introuvables' });
                 return;
             }
             await stats.destroy();
-            res.send('Stats supprimées');
+            res.json({ message: 'Stats supprimées' });
         } catch (error) {
             console.error(error);
-            res.status(500).send('Internal Server Error');
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     },
 
