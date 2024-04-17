@@ -27,7 +27,7 @@ const deckController = {
             // res.json(decks);
         } catch (error) {
             console.trace(error);
-            res.status(500).send('Internal Server Error');
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     },
 
@@ -44,29 +44,16 @@ const deckController = {
                 include: 'flashcards',
             });
 
-            // OU appeler toutes les flashcards lesquelles sont alors filtrées par deckId récupéré dans le params.
-
-            /*    const deckId = req.params.deckId;
-
-            const flashcards = await Flashcard.findAll({
-                where: {
-                    deck_id: deckId,
-                },
-                include: 'deck',
-            }); */
-
             if (!deck) {
                 // Si deck inexistant, on envoie une erreur et on passe au middleware suivant
                 next();
                 return;
             }
-            // res status 200
-            res.json(deck);
 
-            // res.json(flashcards);
+            res.status(200).json(deck);
         } catch (error) {
             console.trace(error);
-            res.status(500).send('Internal Server Error');
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     },
 
@@ -77,7 +64,7 @@ const deckController = {
             const result = deckSchema.safeParse(req.body);
             // Si elles ne correspondent pas au schema de validation, retourne erreur
             if (!result.success) {
-                res.status(400).json(result.error);
+                res.status(400).json({ message: 'données non valides' }); // ou json(result.error);
                 return;
             }
 
@@ -99,7 +86,7 @@ const deckController = {
             res.json(deck);
         } catch (error) {
             console.trace(error);
-            res.status(500).send('Internal Server Error');
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     },
 
@@ -109,13 +96,13 @@ const deckController = {
             // Récupération du deck spécifique à modifier
             const deck = await Deck.findByPk(req.params.deckId);
             if (!deck) {
-                res.status(404).send('Le deck à modifier est introuvable');
+                res.status(404).json({ message: 'Le deck à modifier est introuvable' });
                 return;
             }
             // Vérification de la validation des données créées
             const result = deckSchema.safeParse(req.body);
             if (!result.success) {
-                res.status(400).send('');
+                res.status(400).json({ message: 'données non valides' });
             }
             // Update/modification du deck spécifique dont les données ont été validées
             await deck.update({
@@ -125,7 +112,7 @@ const deckController = {
             res.json(deck);
         } catch (error) {
             console.error(error);
-            res.status(500).send('Internal Server Error');
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     },
 
@@ -133,14 +120,14 @@ const deckController = {
         try {
             const deck = await Deck.findByPk(req.params.deckId);
             if (!deck) {
-                res.status(404).send('Le deck à supprimer est introuvable');
+                res.status(404).json({ message: 'Le deck à supprimer est introuvable' });
                 return;
             }
             await deck.destroy();
-            res.send('Deck supprimé');
+            res.json({ message: 'Deck supprimé' });
         } catch (error) {
             console.error(error);
-            res.status(500).send('Internal Server Error');
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     },
 
@@ -170,7 +157,7 @@ const deckController = {
             res.status(200).json(deckShared);
         } catch (error) {
             console.trace(error);
-            res.status(500).send('Internal Server Error');
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     },
 };
