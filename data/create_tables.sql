@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS "stats", "deck_has_user", "flashcard", "deck", "user";
+
 CREATE TABLE "user" (
     "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "pseudo" VARCHAR(64) NOT NULL UNIQUE,
@@ -11,7 +12,7 @@ CREATE TABLE "user" (
 CREATE TABLE "deck" (
     "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "title" VARCHAR(128) NOT NULL,
-    "user_id" INTEGER NOT NULL REFERENCES "user"("id")ON DELETE CASCADE,
+    "user_id" INTEGER NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
     "share_id" VARCHAR(64) NOT NULL,  
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ
@@ -28,8 +29,8 @@ CREATE TABLE "flashcard" (
 
 CREATE TABLE "deck_has_user" (
     "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "user_id" INTEGER NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
-    "deck_id" INTEGER NOT NULL REFERENCES "deck"("id") ON DELETE CASCADE,
+    "user_id" INTEGER NOT NULL REFERENCES "user" ("id") ON DELETE CASCADE,
+    "deck_id" INTEGER NOT NULL REFERENCES "deck" ("id") ON DELETE CASCADE,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ
 );
@@ -39,8 +40,8 @@ CREATE TABLE "stats" (
     "date" DATE,
     "nb_card_consulted" INTEGER DEFAULT 0,
     "nb_card_success" INTEGER DEFAULT 0,
-    "user_id" INTEGER NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
-    "deck_id" INTEGER NOT NULL REFERENCES "deck"("id") ON DELETE CASCADE,
+    "user_id" INTEGER NOT NULL REFERENCES "user" ("id") ON DELETE CASCADE,
+    "deck_id" INTEGER NOT NULL REFERENCES "deck" ("id") ON DELETE CASCADE,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ
 );
