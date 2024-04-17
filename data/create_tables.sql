@@ -18,7 +18,7 @@ CREATE TABLE "flashcard" (
     "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "title_front" VARCHAR NOT NULL,
     "title_back" VARCHAR NOT NULL,
-    "deck_id" INTEGER NOT NULL REFERENCES "deck"("id"),
+    "deck_id" INTEGER NOT NULL REFERENCES "deck"("id") ON DELETE CASCADE,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ
 );
