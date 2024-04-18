@@ -47,6 +47,13 @@ const flashcardController = {
                 res.status(400).json(result.error);
                 return;
             }
+            const deckOwner = await Deck.findByPk(result.data.deck_id);
+            console.log('deckOwner====>', deckOwner);
+            if (req.user.id !== deckOwner.user_id) {
+                // Si l'utilisateur n'est pas le propriétaire du deck, retourner une erreur 403 (Forbidden)
+                res.status(403).json({ error: 'Vous n\'êtes pas autorisé à ajouter une carte à ce deck.' });
+                return;
+            }
             const flashcard = await Flashcard.create(result.data);
 
             res.json(flashcard);

@@ -68,9 +68,6 @@ const deckController = {
             }
 
             const codeDate = Date.now();
-            // const codeShareId = `${codeDate}${userId}`;
-            // const codeShareId = `${codeDate}${userId}`;
-            // console.log('ici====>', codeShareId);
             const codeShareId = `${codeDate}${userId}`;
             codeShareId.concat(...codeShareId);
 
@@ -130,11 +127,13 @@ const deckController = {
             }
             // Si l'utilisateur n'est pas le propriétaire du deck, on envoie une erreur et on passe au middleware suivant
             if (req.user.id !== deck.user_id) {
-                res.status(403).json({ message: 'Vous n\'avez pas les droits pour supprimer ce deck' });
+                const user = req.user;
+                await user.removeImportedDeck(deck);
+                res.status(200).json({ message: 'Deck supprimé' });
                 return;
             }
             await deck.destroy();
-            res.json({ message: 'Deck supprimé' });
+            res.status(200).json({ message: 'Deck supprimé' });
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal Server Error' });
