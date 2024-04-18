@@ -97,6 +97,7 @@ const deckController = {
             }
 
             // ! a tester avec front pour être sur que ça marche!!
+            // Si l'utilisateur n'est pas le propriétaire du deck, retourner une erreur 403
             if (req.user.id !== deck.user_id) {
                 res.status(403).json({ message: 'Vous n\'avez pas les droits pour modifier ce deck' });
                 return;

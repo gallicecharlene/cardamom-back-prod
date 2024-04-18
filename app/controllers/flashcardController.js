@@ -74,7 +74,7 @@ const flashcardController = {
             // ! a tester avec front pour être sur que cela fonctionne
             // Si l'utilisateur n'est pas le propriétaire de la flashcard, retourner une erreur 403
             if (req.user.id !== flashcard.deck.user_id) {
-                res.status(403).json({ message: 'Vous n\'avez pas les droits pour modifier cette flashcard' });
+                res.status(403).json({ message: 'Vous n\'êtes pas autorisé pour modifier cette flashcard' });
                 return;
             }
             // Vérification de la validation des données créées
