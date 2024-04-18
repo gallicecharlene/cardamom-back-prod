@@ -71,6 +71,12 @@ const flashcardController = {
                 res.status(404).send('La flashcard à modifier est introuvable');
                 return;
             }
+            // ! a tester avec front pour être sur que cela fonctionne
+            // Si l'utilisateur n'est pas le propriétaire de la flashcard, retourner une erreur 403
+            if (req.user.id !== flashcard.deck.user_id) {
+                res.status(403).json({ message: 'Vous n\'avez pas les droits pour modifier cette flashcard' });
+                return;
+            }
             // Vérification de la validation des données créées
             const result = flashcardSchema.safeParse(req.body);
             if (!result.success) {
@@ -92,6 +98,14 @@ const flashcardController = {
                 res.status(404).send('La flashcard à supprimer est introuvable');
                 return;
             }
+
+            // Si l'utilisateur n'est pas le propriétaire de la flashcard, on supprimer seulement les clés étrangères dans la table d'association (deck_has_user)
+            const deck = await Deck.findByPk(flashcard.deck_id);
+            if (req.user.id !== deck.user_id) {
+                res.status(403).json({ message: 'Vous n\'avez pas les droits pour modifier ce deck' });
+                return;
+            }
+
             await flashcard.destroy();
             res.send('Flashcard supprimée');
         } catch (error) {

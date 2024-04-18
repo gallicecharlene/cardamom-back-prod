@@ -111,7 +111,7 @@ const deckController = {
                 title: result.data.title,
                 user_id: userId,
             });
-            res.json(deck);
+            res.status(200).json(deck);
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal Server Error' });
@@ -125,7 +125,7 @@ const deckController = {
                 res.status(404).json({ message: 'Le deck à supprimer est introuvable' });
                 return;
             }
-            // Si l'utilisateur n'est pas le propriétaire du deck, on envoie une erreur et on passe au middleware suivant
+            // Si l'utilisateur n'est pas le propriétaire du deck, on supprimer seulement les clés étrangères dans la table d'association (deck_has_user)
             if (req.user.id !== deck.user_id) {
                 const user = req.user;
                 await user.removeImportedDeck(deck);
