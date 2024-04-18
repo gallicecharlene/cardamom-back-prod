@@ -128,6 +128,7 @@ const deckController = {
                 res.status(404).json({ message: 'Le deck à supprimer est introuvable' });
                 return;
             }
+            // Si l'utilisateur n'est pas le propriétaire du deck, on envoie une erreur et on passe au middleware suivant
             if (req.user.id !== deck.user_id) {
                 res.status(403).json({ message: 'Vous n\'avez pas les droits pour supprimer ce deck' });
                 return;
