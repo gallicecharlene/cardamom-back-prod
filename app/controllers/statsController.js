@@ -134,8 +134,8 @@ const statsController = {
             // stats.nb_card_success += 1;
             // si données validées, alors on peut modifier l'objet stats tel que prévu par les models Stats
             await stats.update({
-                nb_card_consulted: result.nb_card_consulted,
-                nb_card_success: result.nb_card_success,
+                nb_card_consulted: result.data.nb_card_consulted,
+                nb_card_success: result.data.nb_card_success,
             });
 
             res.status(200).json(stats);
