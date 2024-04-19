@@ -47,6 +47,13 @@ const flashcardController = {
                 res.status(400).json({ message: 'données non valides' }); // ou json(result.error);
                 return;
             }
+            const deckOwner = await Deck.findByPk(result.data.deck_id);
+            console.log('deckOwner====>', deckOwner);
+            if (req.user.id !== deckOwner.user_id) {
+                // Si l'utilisateur n'est pas le propriétaire du deck, retourner une erreur 403 (Forbidden)
+                res.status(403).json({ error: 'Vous n\'êtes pas autorisé à ajouter une carte à ce deck.' });
+                return;
+            }
             const flashcard = await Flashcard.create(result.data);
 
             res.json(flashcard);
@@ -62,6 +69,12 @@ const flashcardController = {
             const flashcard = await Flashcard.findByPk(req.params.flashcardId);
             if (!flashcard) {
                 res.status(404).json({ message: 'La flashcard à modifier est introuvable' });
+                return;
+            }
+            // ! a tester avec front pour être sur que cela fonctionne
+            // Si l'utilisateur n'est pas le propriétaire de la flashcard, retourner une erreur 403
+            if (req.user.id !== flashcard.deck.user_id) {
+                res.status(403).json({ message: 'Vous n\'êtes pas autorisé pour modifier cette flashcard' });
                 return;
             }
             // Vérification de la validation des données créées
@@ -85,6 +98,14 @@ const flashcardController = {
                 res.status(404).json({ message: 'La flashcard à supprimer est introuvable' });
                 return;
             }
+
+            // Si l'utilisateur n'est pas le propriétaire de la flashcard, on supprimer seulement les clés étrangères dans la table d'association (deck_has_user)
+            const deck = await Deck.findByPk(flashcard.deck_id);
+            if (req.user.id !== deck.user_id) {
+                res.status(403).json({ message: 'Vous n\'avez pas les droits pour modifier ce deck' });
+                return;
+            }
+
             await flashcard.destroy();
             res.json({ message: 'Flashcard supprimée' });
         } catch (error) {

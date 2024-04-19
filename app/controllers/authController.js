@@ -67,7 +67,7 @@ const authController = {
             if (userExists) {
                 return res.status(400).json({ error: 'Cet email est déjà enregistré' });
             }
-            const passwordHash = await bcrypt.hash(result.data.password, parseInt(process.env.NB_OF_SALT_ROUNDS));
+            const passwordHash = await bcrypt.hash(result.data.password, parseInt(process.env.NB_OF_SALT_ROUNDS, process.env.NB_OF_SALT_ROUNDS));
             console.log('password', passwordHash);
 
             await User.create({
@@ -105,7 +105,7 @@ const authController = {
 
             // Si le password est modifié, on le hash
             if (result.data.password) {
-                result.data.password = await bcrypt.hash(result.data.password, parseInt(process.env.NB_OF_SALT_ROUNDS));
+                result.data.password = await bcrypt.hash(result.data.password, parseInt(process.env.NB_OF_SALT_ROUNDS, process.env.NB_OF_SALT_ROUNDS));
             }
 
             // Mise à jour de l'utilisateur en BDD

@@ -27,7 +27,7 @@ const deckController = {
             // res.json(decks);
         } catch (error) {
             console.trace(error);
-            res.status(500).json({ error: 'Internal Server Error' });
+            res.status(500).json('Internal Server Error');
         }
     },
 
@@ -39,12 +39,11 @@ const deckController = {
             const deck = await Deck.findOne({
                 where: {
                     id: deckId,
-                    user_id: userId,
                 },
-                include: 'flashcards',
+                include: ['flashcards', 'users'],
             });
 
-            if (!deck) {
+            if (!deck || (deck.user_id !== req.user.id && !deck.users.find((user) => req.user.id === user.id))) {
                 // Si deck inexistant, on envoie une erreur et on passe au middleware suivant
                 next();
                 return;
@@ -69,9 +68,6 @@ const deckController = {
             }
 
             const codeDate = Date.now();
-            // const codeShareId = `${codeDate}${userId}`;
-            // const codeShareId = `${codeDate}${userId}`;
-            // console.log('ici====>', codeShareId);
             const codeShareId = `${codeDate}${userId}`;
             codeShareId.concat(...codeShareId);
 
@@ -99,6 +95,13 @@ const deckController = {
                 res.status(404).json({ message: 'Le deck à modifier est introuvable' });
                 return;
             }
+
+            // ! a tester avec front pour être sur que ça marche!!
+            // Si l'utilisateur n'est pas le propriétaire du deck, retourner une erreur 403
+            if (req.user.id !== deck.user_id) {
+                res.status(403).json({ message: 'Vous n\'avez pas les droits pour modifier ce deck' });
+                return;
+            }
             // Vérification de la validation des données créées
             const result = deckSchema.safeParse(req.body);
             if (!result.success) {
@@ -109,7 +112,7 @@ const deckController = {
                 title: result.data.title,
                 user_id: userId,
             });
-            res.json(deck);
+            res.status(200).json(deck);
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal Server Error' });
@@ -123,8 +126,15 @@ const deckController = {
                 res.status(404).json({ message: 'Le deck à supprimer est introuvable' });
                 return;
             }
+            // Si l'utilisateur n'est pas le propriétaire du deck, on supprimer seulement les clés étrangères dans la table d'association (deck_has_user)
+            if (req.user.id !== deck.user_id) {
+                const user = req.user;
+                await user.removeImportedDeck(deck);
+                res.status(200).json({ message: 'Deck supprimé' });
+                return;
+            }
             await deck.destroy();
-            res.json({ message: 'Deck supprimé' });
+            res.status(200).json({ message: 'Deck supprimé' });
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal Server Error' });
