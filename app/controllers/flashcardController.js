@@ -71,10 +71,11 @@ const flashcardController = {
                 res.status(404).json({ message: 'La flashcard à modifier est introuvable' });
                 return;
             }
-            // ! a tester avec front pour être sur que cela fonctionne
+            // Récupération du user qui a créer le deck
+            const deckOwner = await Deck.findByPk(flashcard.dataValues.deck_id);
             // Si l'utilisateur n'est pas le propriétaire de la flashcard, retourner une erreur 403
-            if (req.user.id !== flashcard.deck.user_id) {
-                res.status(403).json({ message: 'Vous n\'êtes pas autorisé pour modifier cette flashcard' });
+            if (req.user.id !== deckOwner.user_id) {
+                res.status(403).json({ message: 'Vous n\'avez pas les droits pour modifier cette flashcard' });
                 return;
             }
             // Vérification de la validation des données créées

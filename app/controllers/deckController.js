@@ -95,7 +95,7 @@ const deckController = {
                 res.status(404).json({ message: 'Le deck à modifier est introuvable' });
                 return;
             }
-
+            console.log(deck);
             // ! a tester avec front pour être sur que ça marche!!
             // Si l'utilisateur n'est pas le propriétaire du deck, retourner une erreur 403
             if (req.user.id !== deck.user_id) {
@@ -141,7 +141,7 @@ const deckController = {
         }
     },
 
-    async getOneShared(req, res, next) {
+    async getOneShared(req, res) {
         try {
             // Récupération du deck partagé associé au share_id
             const shareId = req.params.shareId;
@@ -153,9 +153,7 @@ const deckController = {
             });
 
             if (!deckShared) {
-                // Si le deck n'existe pas, passez au middleware suivant
-                next();
-                return;
+                return res.status(404).json({ message: 'Le deck partagé est introuvable' });
             }
 
             // Récupération de l'utilisateur actuel qui récupère le deck
