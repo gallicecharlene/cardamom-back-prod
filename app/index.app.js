@@ -13,4 +13,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(router);
 
+app.set('env', process.env.NODE_ENV || 'development');
+
 export default app;
