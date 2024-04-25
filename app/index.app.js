@@ -5,6 +5,9 @@ import router from './router.js';
 
 const app = express();
 
+// Définir trust proxy à true
+app.set('trust proxy', true);
+
 // Add rate limit policy
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
