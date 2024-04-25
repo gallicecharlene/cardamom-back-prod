@@ -1,0 +1,51 @@
+@endpoint=http://localhost:{{$dotenv PORT}}/api
+
+### POST test authentification
+POST {{endpoint}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "maia77778@maia.fr",
+    "password": "123456"
+}
+
+### POST création d'un utilisateur (test avec bon mail valide)
+POST {{endpoint}}/auth/signup
+Content-Type: application/json
+
+{
+    "pseudo": "maia77778",
+    "email": "maia77778@maia.fr",
+    "password": "123456"
+}
+
+### POST création d'un utilisateur (test avec mauvais mail)
+POST {{endpoint}}/auth/signup
+Content-Type: application/json
+
+{
+    "pseudo": "test4",
+    "email": "chachlive.fr",
+    "password": "123456"
+}
+
+### GET récupération d'un utilisateurs via l'id du token
+GET {{endpoint}}/profile
+Content-Type: application/json
+Authorization: Bearer {{$dotenv TOKEN}}
+
+
+### PATCH modification d'un user via l'id du token 
+PATCH {{endpoint}}/profile
+Content-Type: application/json
+Authorization: Bearer {{$dotenv TOKEN}}
+   
+{
+    "pseudo": "maia888",
+    "email": "maia77778@maia.fr",
+    "password": "123456"
+}
+
+### DELETE supprimer un utilisateur via l'id du token
+DELETE {{endpoint}}/profile
+Authorization: Bearer {{$dotenv TOKEN}}
