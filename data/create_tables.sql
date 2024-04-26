@@ -1,3 +1,4 @@
+-- SQLBook: Code
 DROP TABLE IF EXISTS "stats", "deck_has_user", "flashcard", "deck", "user";
 
 

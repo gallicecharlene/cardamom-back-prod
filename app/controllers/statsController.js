@@ -13,8 +13,6 @@ const statsUpdateSchema = z.object({
     stats_id: z.number(),
 });
 
-// ! CONTROLLER COMPLETEMENT A REVOIR, il y a une incohérence dans l'association de la table stats avec user
-
 const statsController = {
 
     // récupérer toutes les stats de tous les decks d'un seul user
@@ -89,7 +87,6 @@ const statsController = {
             const result = statsSchema.safeParse(req.body); // body contenant nb_card_success , nb_card_consulted, deck_id, user_id
             if (!result.success) {
                 res.status(400).json({ message: 'données non valides' }); // ou json(result.error);
-                return;
             }
             // si données validées, alors on peut générer un objet stats tel que prévu par les models Stats
             const stats = await Stats.create({
