@@ -5,8 +5,8 @@ POST {{endpoint}}/auth/login
 Content-Type: application/json
 
 {
-    "email": "maia77778@maia.fr",
-    "password": "123456"
+    "email": "test77@test.fr",
+    "password": "test77"
 }
 
 
@@ -64,7 +64,7 @@ Authorization: Bearer {{$dotenv TOKEN}}
 }
 
 ### POST créer un stat
-POST {{endpoint}}/stats
+POST {{endpoint}}/decks/26/stats
 Content-Type: application/json
 Authorization: Bearer {{$dotenv TOKEN}}
 
@@ -72,3 +72,20 @@ Authorization: Bearer {{$dotenv TOKEN}}
     "nb_card_consulted": 10,
     "nb_card_success": 5
 }
+
+### PATCH modifier un stat
+PATCH {{endpoint}}/stats/3
+Content-Type: application/json
+Authorization: Bearer {{$dotenv TOKEN}}
+
+{
+    "nb_card_consulted": 15,
+    "nb_card_success": 7,
+    "deck_id": 26,
+    "stats_id": 2
+}
+
+### DELETE supprimer un stat
+DELETE {{endpoint}}/stats/3
+Authorization: Bearer {{$dotenv TOKEN}}
+
