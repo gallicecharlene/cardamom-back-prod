@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { Deck } from '../models/index.js';
+import ApiError from '../errors/apiError.js';
 
 // schema de validation
 
@@ -38,7 +39,7 @@ const deckController = {
 
         if (!deck || (deck.user_id !== req.user.id && !deck.users.find((user) => req.user.id === user.id))) {
             // Si deck inexistant, on envoie une erreur et on passe au middleware suivant
-            next();
+            next(new ApiError(404, { message: 'Deck not found' }));
         }
 
         res.status(200).json(deck);
@@ -50,7 +51,7 @@ const deckController = {
         const result = deckSchema.safeParse(req.body);
         // Si elles ne correspondent pas au schema de validation, retourne erreur
         if (!result.success) {
-            res.status(400).json({ message: 'données non valides' }); // ou json(result.error);
+            throw new ApiError(400, { message: 'Please fill in all fields' });
         }
 
         const codeDate = Date.now();
@@ -72,18 +73,20 @@ const deckController = {
         // Récupération du deck spécifique à modifier
         const deck = await Deck.findByPk(req.params.deckId);
         if (!deck) {
-            res.status(404).json({ message: 'Le deck à modifier est introuvable' });
+            throw new ApiError(404, { message: 'Deck not found' });
         }
 
         // Si l'utilisateur n'est pas le propriétaire du deck, retourner une erreur 403
         if (req.user.id !== deck.user_id) {
-            res.status(403).json({ message: 'Vous n\'avez pas les droits pour modifier ce deck' });
+            throw new ApiError(400, { message: 'You do not have the rights to modify this deck' });
         }
+
         // Vérification de la validation des données créées
         const result = deckSchema.safeParse(req.body);
         if (!result.success) {
-            res.status(400).json({ message: 'données non valides' });
+            throw new ApiError(400, { message: 'invalid data' });
         }
+
         // Update/modification du deck spécifique dont les données ont été validées
         await deck.update({
             title: result.data.title,
@@ -95,7 +98,7 @@ const deckController = {
     async delete(req, res) {
         const deck = await Deck.findByPk(req.params.deckId);
         if (!deck) {
-            res.status(404).json({ message: 'Le deck à supprimer est introuvable' });
+            throw new ApiError(404, { message: 'Deck not found' });
         }
         // Si l'utilisateur n'est pas le propriétaire du deck, on supprimer seulement les clés étrangères dans la table d'association (deck_has_user)
         if (req.user.id !== deck.user_id) {
@@ -103,8 +106,10 @@ const deckController = {
             await user.removeImportedDeck(deck);
             res.status(200).json({ message: 'Deck supprimé' });
         }
-        await deck.destroy();
-        res.status(200).json({ message: 'Deck supprimé' });
+        if (req.user.id === deck.user_id) {
+            await deck.destroy();
+            res.status(200).json({ message: 'Deck supprimé' });
+        }
     },
 
     async getOneShared(req, res) {
@@ -118,7 +123,7 @@ const deckController = {
         });
 
         if (!deckShared) {
-            res.status(404).json({ message: 'Le deck partagé est introuvable' });
+            throw new ApiError(404, { message: 'The shared deck cannot be found' });
         }
 
         // Récupération de l'utilisateur actuel qui récupère le deck

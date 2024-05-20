@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import validator from 'email-validator';
 import { z } from 'zod';
 import User from '../models/User.js';
+import ApiError from '../errors/apiError.js';
 
 // schema de validation pour la creation d'un utilisateur
 const userSchema = z.object({
@@ -23,19 +24,19 @@ const authController = {
     async login(req, res) {
         // try {
         const { email, password } = req.body;
-        if (!email) {
-            res.status(401).json({ error: 'Missing email or password' });
+        if (!email || !password) {
+            throw new ApiError('401', { message: 'User or password incorrect' });
         }
         // Récupérer l'utilisateur par son email
         const user = await User.findOne({ where: { email } });
 
         if (!user) {
-            res.status(401).json({ error: 'User or password incorrect' });
+            throw new ApiError('401', { message: 'User or password incorrect' });
         }
         // Comparer le password avec le password (enregistrer en BDD (hashé))
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            res.status(401).json({ error: 'User or password incorrect' });
+            throw new ApiError('401', { message: 'User or password incorrect' });
         }
         // Créer un objet utilisateur sans le mot de passe
         const userWithoutPassword = {
@@ -54,23 +55,23 @@ const authController = {
         // Renvoyer le token et l'utilisateur sans le mot de passe
         res.status(200).json({ token, user: userWithoutPassword });
     },
+
     async create(req, res) {
         const result = userSchema.safeParse(req.body);
 
         if (!result.success) {
-            res.status(400).json({ error: 'Veuillez renseigner tous les champs' });
+            throw new ApiError(400, { message: 'Please fill in all fields and/or check that the information is valid.' });
         }
         // check if email is valid
         if (!validator.validate(result.data.email)) {
-            res.status(400).json({ error: "L'adresse email n'est pas valide" }); // (/!\affiche le mess d'erreur que si '@' manquant)
+            throw new ApiError(400, { message: 'The email address provided is invalide' });
         }
         // verify if user exist in BDD
         const userExists = await User.findOne({ where: { email: result.data.email } });
         if (userExists) {
-            res.status(400).json({ error: 'Cet email est déjà enregistré' });
+            throw new ApiError(400, { message: 'The email address is already in use' });
         }
         const passwordHash = await bcrypt.hash(result.data.password, parseInt(process.env.NB_OF_SALT_ROUNDS, process.env.NB_OF_SALT_ROUNDS));
-        console.log('password', passwordHash);
 
         await User.create({
             pseudo: result.data.pseudo,
@@ -98,7 +99,7 @@ const authController = {
         const result = userUpdateSchema.safeParse(req.body);
 
         if (!result.success) {
-            res.status(400).json({ error: 'Veuillez renseigner tous les champs' });
+            throw new ApiError(400, { message: 'Please fill in all fields and/or check that the information is valid' });
         }
 
         // Si le password est modifié, on le hash
