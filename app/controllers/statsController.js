@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { Stats } from '../models/index.js';
+import ApiError from '../errors/apiError.js';
 
 const statsSchema = z.object({
     nb_card_consulted: z.number(),
@@ -12,6 +13,8 @@ const statsUpdateSchema = z.object({
     deck_id: z.number(),
     stats_id: z.number(),
 });
+
+// ! A REVOIR SI BESOIN DE TOUTES CES METHODES
 
 const statsController = {
 
@@ -38,35 +41,28 @@ const statsController = {
         });
 
         if (!stats) {
-            res.status(404).json({ error: 'Stat not found' });
-            return;
+            throw new ApiError(404, { message: 'Stat not found' });
         }
 
         res.status(200).json(stats);
     },
 
     async getOne(req, res) {
-        try {
-            // Récupération des stats d'un deck grace au deck_id
-            const userId = req.user.id;
-            const statsId = req.params.statsId;
-            const stats = await Stats.findOne({
-                where: {
-                    id: statsId,
-                    user_id: userId,
-                },
-            });
+        // Récupération des stats d'un deck grace au deck_id
+        const userId = req.user.id;
+        const statsId = req.params.statsId;
+        const stats = await Stats.findOne({
+            where: {
+                id: statsId,
+                user_id: userId,
+            },
+        });
 
-            if (!stats) {
-                res.status(404).json({ error: 'Stat not found' });
-                return;
-            }
-
-            res.status(200).json(stats);
-        } catch (error) {
-            console.trace(error);
-            res.status(500).json({ error: 'Internal Server Error' });
+        if (!stats) {
+            throw new ApiError(404, { message: 'Stats not found' });
         }
+
+        res.status(200).json(stats);
     },
 
     async create(req, res) {
@@ -74,10 +70,11 @@ const statsController = {
         const deckId = req.params.deckId;
         // on vérifie que le body respecte le schéma de validation de stats définit plus haut
         const result = statsSchema.safeParse(req.body);
+
         if (!result.success) {
-            res.status(400).json({ message: 'données non valides' });
+            throw new ApiError(400, { message: 'invalid data' });
         }
-        // si données validées, alors on peut générer un objet stats tel que prévu par les models Stats
+
         const stats = await Stats.create({
             nb_card_consulted: result.data.nb_card_consulted,
             nb_card_success: result.data.nb_card_success,
@@ -100,12 +97,12 @@ const statsController = {
         });
             // Si stats inexistant, erreur
         if (!stats) {
-            res.status(404).json({ message: 'les stats demandées sont introuvables' });
+            throw new ApiError(404, { message: 'the requested stats cannot be found' });
         }
 
         const result = statsUpdateSchema.safeParse(req.body);
         if (!result.success) {
-            res.status(400).json({ message: 'données non valides' });
+            throw new ApiError(400, { message: 'invalid data' });
         }
 
         await stats.update({
@@ -127,9 +124,14 @@ const statsController = {
             },
         });
         if (!stats) {
-            res.status(404).json({ message: 'Les stats à supprimer sont introuvables' });
-            return;
+            throw new ApiError(404, { message: 'Stats to be deleted cannot be found' });
         }
+        // // Si l'utilisateur n'est pas le propriétaire
+        // const deck = await Deck.findByPk(stats.deck_id);
+        // if (req.user.id !== deck.user_id) {
+        //     throw new ApiError(403, { message: 'You do not have the rights to modify this deck' });
+        // }
+
         await stats.destroy();
         res.status(200).json({ message: 'Stats supprimées' });
     },

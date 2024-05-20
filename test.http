@@ -15,9 +15,9 @@ POST {{endpoint}}/auth/signup
 Content-Type: application/json
 
 {
-    "pseudo": "maia77778",
-    "email": "maia77778@maia.fr",
-    "password": "123456"
+    "pseudo": "testForShared@test.fr",
+    "email": "testForShared@test.fr",
+    "password": "test77"
 }
 
 ### POST création d'un utilisateur (test avec mauvais mail)
@@ -26,24 +26,24 @@ Content-Type: application/json
 
 {
     "pseudo": "test4",
-    "email": "chachlive.fr",
+    "email": "testtest.fr",
     "password": "123456"
 }
 
 ### GET récupération d'un utilisateurs via l'id du token
 GET {{endpoint}}/profile
 Content-Type: application/json
-Authorization: Bearer {{$dotenv TOKEN}}
+Authorization: Bearer {{$dotenv TOKEN1}}
 
 
 ### PATCH modification d'un user via l'id du token 
 PATCH {{endpoint}}/profile
 Content-Type: application/json
-Authorization: Bearer {{$dotenv TOKEN}}
+Authorization: Bearer {{$dotenv TOKEN1}}
    
 {
-    "pseudo": "maia77",
-    "email": "maia77778@maia.fr",
+    "pseudo": "test77",
+    "email": "test77@test.fr",
     "password": "test77"
 
 }
@@ -52,40 +52,127 @@ Authorization: Bearer {{$dotenv TOKEN}}
 DELETE {{endpoint}}/profile
 Authorization: Bearer {{$dotenv TOKEN}}
 
+### POST créer un deck
+POST {{endpoint}}/decks
+Content-Type: application/json
+Authorization: Bearer {{$dotenv TOKEN1}}
+
+{
+    "title": "Capitales du monde2"
+}
+### GET récupérer tout les decks
+GET {{endpoint}}/decks
+Content-Type: application/json
+Authorization: Bearer {{$dotenv TOKEN1}}
+
+### GET récupérer un deck
+GET {{endpoint}}/decks/2
+Content-Type: application/json
+Authorization: Bearer {{$dotenv TOKEN1}}
+
+### GET récupérer un deck partagé
+GET {{endpoint}}/decks/share/17162385498871
+Content-Type: application/json
+Authorization: Bearer {{$dotenv TOKEN2}}
+
+### PATCH modifier un deck
+PATCH {{endpoint}}/decks/2
+Content-Type: application/json
+Authorization: Bearer {{$dotenv TOKEN1}}
+
+{
+    "title": "Capitales du monde5"
+}
+### PATCH modifier un deck partagé (ne doit pas fonctionner)
+PATCH {{endpoint}}/decks/2
+Content-Type: application/json
+Authorization: Bearer {{$dotenv TOKEN2}}
+
+{
+    "title": "Capitales du monde5"
+}
+
+### DELETE supprimer un deck
+DELETE {{endpoint}}/decks/2
+Authorization: Bearer {{$dotenv TOKEN1}}
+
+### DELETE supprimer un deck partagé (ne doit pas fonctionner)
+DELETE {{endpoint}}/decks/2
+Authorization: Bearer {{$dotenv TOKEN2}}
+
+
 ### POST création d'une flashcard
 POST {{endpoint}}/flashcards
 Content-Type: application/json
-Authorization: Bearer {{$dotenv TOKEN}}
+Authorization: Bearer {{$dotenv TOKEN1}}
 
 {
-    "deck_id": 32,
+    "deck_id": 2,
+    "title_front": "Quelle est la capitale de l'Italie ?",
+    "title_back": "Roma"
+}
+
+### PATCH modification d'une flashcard
+PATCH {{endpoint}}/flashcards/1
+Content-Type: application/json
+Authorization: Bearer {{$dotenv TOKEN1}}
+
+{
+    "deck_id": 2,
+    "title_front": "Quelle est la capitale de l'Italie ?",
+    "title_back": "Rome"
+}
+### PATCH modification d'une flashcard partagée (ne doit pas fonctionner)
+PATCH {{endpoint}}/flashcards/1
+Content-Type: application/json
+Authorization: Bearer {{$dotenv TOKEN2}}
+
+{
+    "deck_id": 2,
     "title_front": "Quelle est la capitale de l'Italie ?",
     "title_back": "Rome"
 }
 
-### POST créer un stat
-POST {{endpoint}}/decks/26/stats
+
+### GET récupérer tout les stats d'un user (token) (getAll)
+GET {{endpoint}}/stats
+Content-Type: application/json
+Authorization: Bearer {{$dotenv TOKEN1}}
+
+### GET récupérer tout les stats d'un deck(getByDeck)
+GET {{endpoint}}/decks/2/stats
 Content-Type: application/json
 Authorization: Bearer {{$dotenv TOKEN}}
 
+
+
+### POST créer un stat (getOne)
+POST {{endpoint}}/decks/2/stats
+Content-Type: application/json
+Authorization: Bearer {{$dotenv TOKEN2}}
+
 {
-    "nb_card_consulted": 10,
-    "nb_card_success": 5
+    "nb_card_consulted": 33,
+    "nb_card_success": 10
 }
 
 ### PATCH modifier un stat
-PATCH {{endpoint}}/stats/3
+PATCH {{endpoint}}/stats/4
 Content-Type: application/json
-Authorization: Bearer {{$dotenv TOKEN}}
+Authorization: Bearer {{$dotenv TOKEN2}}
 
 {
-    "nb_card_consulted": 15,
-    "nb_card_success": 7,
-    "deck_id": 26,
-    "stats_id": 2
+    "nb_card_consulted": 30,
+    "nb_card_success": 20,
+    "deck_id": 2,
+    "stats_id": 4
 }
 
-### DELETE supprimer un stat
-DELETE {{endpoint}}/stats/3
-Authorization: Bearer {{$dotenv TOKEN}}
 
+### DELETE supprimer un stat
+DELETE {{endpoint}}/stats/2
+Authorization: Bearer {{$dotenv TOKEN1}}
+
+### DELETE supprimer un stat 
+DELETE {{endpoint}}/stats/4
+Authorization: Bearer {{$dotenv TOKEN2}}
