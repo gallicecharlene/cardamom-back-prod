@@ -1,0 +1,18 @@
+%%mocodo
+:
+carte_mémoire: code_carte_mémoire, tire_recto, titre_verso, #code_deck > Deck_de_carte > code_deck
+:::
+progresse: #code_deck > Deck_de_carte > code_deck, _#code_utilisateur > Utilisateur > code_utilisateur, nb_cartes_présentées, nb_cartes_réussies
+:::
+
+
+:::
+Deck_de_carte: code_deck, titre, code_partage, #code_utilisateur > Utilisateur > code_utilisateur
+:::
+Utilisateur: code_utilisateur, pseudo, email, mot_de_passe
+:
+
+
+:::::
+consulte: #code_deck > Deck_de_carte > code_deck, _#code_utilisateur > Utilisateur > code_utilisateur
+:::
