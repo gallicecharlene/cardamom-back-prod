@@ -166,6 +166,12 @@ const statsController = {
             console.error(error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
+<<<<<<< Updated upstream
+=======
+
+        await stats.destroy();
+        res.status(200).json({ message: 'Stats supprimées' });
+>>>>>>> Stashed changes
     },
 
 };
