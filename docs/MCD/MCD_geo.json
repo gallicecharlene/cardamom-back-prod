@@ -1,0 +1,33 @@
+{
+  "width": 496,
+  "height": 296,
+  "cx": [
+    [ "CARTE_MEMOIRE", 78 ],
+    [ "PROGRESSE", 315 ],
+    [ "APPARTIENT", 78 ],
+    [ "DECK_DE_CARTE", 200 ],
+    [ "POSSEDE", 315 ],
+    [ "UTILISATEUR", 433 ],
+    [ "CONSULTE", 315 ]
+  ],
+  "cy": [
+    [ "CARTE_MEMOIRE", 51 ],
+    [ "PROGRESSE", 51 ],
+    [ "APPARTIENT", 161 ],
+    [ "DECK_DE_CARTE", 161 ],
+    [ "POSSEDE", 161 ],
+    [ "UTILISATEUR", 161 ],
+    [ "CONSULTE", 262 ]
+  ],
+  "shift": [
+    [ "PROGRESSE,DECK_DE_CARTE,0", 0 ],
+    [ "PROGRESSE,UTILISATEUR,0", 0 ],
+    [ "APPARTIENT,CARTE_MEMOIRE,0", 0 ],
+    [ "APPARTIENT,DECK_DE_CARTE,0", 0 ],
+    [ "POSSEDE,DECK_DE_CARTE,0", 0 ],
+    [ "POSSEDE,UTILISATEUR,0", 0 ],
+    [ "CONSULTE,DECK_DE_CARTE,0", 0 ],
+    [ "CONSULTE,UTILISATEUR,0", 0 ]
+  ],
+  "ratio": []
+}
