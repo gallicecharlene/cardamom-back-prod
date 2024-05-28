@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Deck } from '../models/index.js';
+import { Deck, Stats } from '../models/index.js';
 import ApiError from '../errors/apiError.js';
 
 // schema de validation
@@ -17,6 +17,7 @@ const deckController = {
             where: {
                 user_id: userId,
             },
+            include: { association: 'stats_deck' },
         });
             // Récupérez tous les decks importés par l'utilisateur
         const importedDecks = await req.user.getImportedDecks();
@@ -46,8 +47,9 @@ const deckController = {
     },
 
     async create(req, res) {
-        // Vérification de la validation des données créées
+        // Récupération de l'utilisateur actuel (token)
         const userId = req.user.id;
+        // Vérification de la validation des données créées
         const result = deckSchema.safeParse(req.body);
         // Si elles ne correspondent pas au schema de validation, retourne erreur
         if (!result.success) {
@@ -56,7 +58,7 @@ const deckController = {
 
         const codeDate = Date.now();
         const codeShareId = `${codeDate}${userId}`;
-        codeShareId.concat(...codeShareId);
+        // codeShareId.concat(...codeShareId);
 
         // Sinon création d'un nouveau deck dont les données sont validées
         const deck = await Deck.create({
@@ -65,7 +67,7 @@ const deckController = {
             share_id: codeShareId,
         });
 
-        res.status(200).json(deck);
+        res.status(201).json({ deck });
     },
 
     async update(req, res) {

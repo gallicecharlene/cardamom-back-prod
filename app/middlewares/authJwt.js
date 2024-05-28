@@ -20,7 +20,13 @@ export default async (req, res, next) => {
 
         // Vérification de l'existance de l'utilisateur en BDD
         const userId = tokendecoded.id;
-        const user = await User.findOne({ where: { id: userId } });
+        const user = await User.findOne({
+            where: {
+                id: userId,
+            },
+
+        });
+        console.log('authJWT', user);
 
         if (!user) {
             return res.status(404).json({ message: `User ${userId} not exist` });
