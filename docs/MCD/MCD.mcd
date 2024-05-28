@@ -1,0 +1,14 @@
+carte_mémoire: code_carte_mémoire, tire_recto, titre_verso
+:
+progresse, 0N Deck_de_carte, 0N Utilisateur: nb_cartes_présentées, nb_cartes_réussies
+:
+
+appartient, 11 Carte_mémoire, 0N Deck_de_carte
+Deck_de_carte: code_deck, titre, code_partage
+possède, 11 Deck_de_carte, 0N Utilisateur
+Utilisateur: code_utilisateur, pseudo, email, mot_de_passe
+
+:
+:
+consulte, 0N Deck_de_carte, 0N Utilisateur
+:

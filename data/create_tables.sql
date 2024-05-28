@@ -1,8 +1,15 @@
+BEGIN;
+
 DROP TABLE IF EXISTS "stats", "deck_has_user", "flashcard", "deck", "user";
 
 
 CREATE TABLE "user" (
-    "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY, "pseudo" VARCHAR(64) NOT NULL UNIQUE, "email" VARCHAR NOT NULL UNIQUE, "password" VARCHAR NOT NULL, "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP, "updated_at" TIMESTAMPTZ
+    "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    "pseudo" VARCHAR(64) NOT NULL UNIQUE,
+    "email" VARCHAR NOT NULL UNIQUE,
+    "password" VARCHAR NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ
 );
 
 CREATE TABLE "deck" (
@@ -33,7 +40,6 @@ CREATE TABLE "deck_has_user" (
 
 CREATE TABLE "stats" (
     "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "date" DATE,
     "nb_card_consulted" INTEGER DEFAULT 0,
     "nb_card_success" INTEGER DEFAULT 0,
     "user_id" INTEGER NOT NULL REFERENCES "user" ("id") ON DELETE CASCADE,
