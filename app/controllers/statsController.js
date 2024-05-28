@@ -7,12 +7,12 @@ const statsSchema = z.object({
     nb_card_success: z.number(),
 });
 
-const statsUpdateSchema = z.object({
-    nb_card_consulted: z.number(),
-    nb_card_success: z.number(),
-    deck_id: z.number(),
-    stats_id: z.number(),
-});
+// const statsUpdateSchema = z.object({
+//     nb_card_consulted: z.number(),
+//     nb_card_success: z.number(),
+//     deck_id: z.number(),
+//     stats_id: z.number(),
+// });
 
 // ! A REVOIR SI BESOIN DE TOUTES CES METHODES
 
@@ -25,6 +25,7 @@ const statsController = {
             where: {
                 user_id: userId,
             },
+            include: { association: 'stats_deck' },
         });
         res.status(200).json(stats);
     },
@@ -47,23 +48,23 @@ const statsController = {
         res.status(200).json(stats);
     },
 
-    async getOne(req, res) {
-        // Récupération des stats d'un deck grace au deck_id
-        const userId = req.user.id;
-        const statsId = req.params.statsId;
-        const stats = await Stats.findOne({
-            where: {
-                id: statsId,
-                user_id: userId,
-            },
-        });
+    // async getOne(req, res) {
+    //     // Récupération des stats d'un deck grace au deck_id
+    //     const userId = req.user.id;
+    //     const statsId = req.params.statsId;
+    //     const stats = await Stats.findOne({
+    //         where: {
+    //             id: statsId,
+    //             user_id: userId,
+    //         },
+    //     });
 
-        if (!stats) {
-            throw new ApiError(404, { message: 'Stats not found' });
-        }
+    //     if (!stats) {
+    //         throw new ApiError(404, { message: 'Stats not found' });
+    //     }
 
-        res.status(200).json(stats);
-    },
+    //     res.status(200).json(stats);
+    // },
 
     async create(req, res) {
         const userId = req.user.id;
@@ -73,6 +74,23 @@ const statsController = {
 
         if (!result.success) {
             throw new ApiError(400, { message: 'invalid data' });
+        }
+        const statsCount = await Stats.count({
+            where: {
+                deck_id: deckId,
+            },
+        });
+
+        if (statsCount >= 5) {
+            const oldestStat = await Stats.findOne({
+                where: {
+                    deck_id: deckId,
+                },
+                order: [['createdAt', 'ASC']],
+            });
+            if (oldestStat) {
+                await oldestStat.destroy();
+            }
         }
 
         const stats = await Stats.create({
@@ -85,56 +103,51 @@ const statsController = {
         res.status(200).json(stats);
     },
 
-    async update(req, res) {
-        // Récupération des stats spécifiques au deck à modifier
-        const userId = req.user.id;
-        const statsId = req.params.statsId;
-        const stats = await Stats.findOne({
-            where: {
-                user_id: userId,
-                id: statsId,
-            },
-        });
-            // Si stats inexistant, erreur
-        if (!stats) {
-            throw new ApiError(404, { message: 'the requested stats cannot be found' });
-        }
+    // async update(req, res) {
+    //     // Récupération des stats spécifiques au deck à modifier
+    //     const userId = req.user.id;
+    //     const statsId = req.params.statsId;
+    //     const stats = await Stats.findOne({
+    //         where: {
+    //             user_id: userId,
+    //             id: statsId,
+    //         },
+    //     });
+    //         // Si stats inexistant, erreur
+    //     if (!stats) {
+    //         throw new ApiError(404, { message: 'the requested stats cannot be found' });
+    //     }
 
-        const result = statsUpdateSchema.safeParse(req.body);
-        if (!result.success) {
-            throw new ApiError(400, { message: 'invalid data' });
-        }
+    //     const result = statsUpdateSchema.safeParse(req.body);
+    //     if (!result.success) {
+    //         throw new ApiError(400, { message: 'invalid data' });
+    //     }
 
-        await stats.update({
-            nb_card_consulted: result.data.nb_card_consulted,
-            nb_card_success: result.data.nb_card_success,
-        });
+    //     await stats.update({
+    //         nb_card_consulted: result.data.nb_card_consulted,
+    //         nb_card_success: result.data.nb_card_success,
+    //     });
 
-        res.status(200).json(stats);
-    },
+    //     res.status(200).json(stats);
+    // },
 
-    // méthode non utile pour l'instant
-    async delete(req, res) {
-        const userId = req.user.id;
-        const statsId = req.params.statsId;
-        const stats = await Stats.findOne({
-            where: {
-                id: statsId,
-                user_id: userId,
-            },
-        });
-        if (!stats) {
-            throw new ApiError(404, { message: 'Stats to be deleted cannot be found' });
-        }
-        // // Si l'utilisateur n'est pas le propriétaire
-        // const deck = await Deck.findByPk(stats.deck_id);
-        // if (req.user.id !== deck.user_id) {
-        //     throw new ApiError(403, { message: 'You do not have the rights to modify this deck' });
-        // }
+    // // méthode non utile pour l'instant
+    // async delete(req, res) {
+    //     const userId = req.user.id;
+    //     const statsId = req.params.statsId;
+    //     const stats = await Stats.findOne({
+    //         where: {
+    //             id: statsId,
+    //             user_id: userId,
+    //         },
+    //     });
+    //     if (!stats) {
+    //         throw new ApiError(404, { message: 'Stats to be deleted cannot be found' });
+    //     }
 
-        await stats.destroy();
-        res.status(200).json({ message: 'Stats supprimées' });
-    },
+    //     await stats.destroy();
+    //     res.status(200).json({ message: 'Stats supprimées' });
+    // },
 
 };
 

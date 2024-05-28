@@ -21,22 +21,27 @@ const userUpdateSchema = z.object({
 
 const authController = {
 
-    async login(req, res) {
+    async login(req, res, next) {
         // try {
         const { email, password } = req.body;
         if (!email || !password) {
-            throw new ApiError('401', { message: 'User or password incorrect' });
+            next(new ApiError(401, { message: 'User or password incorrect' }));
         }
         // Récupérer l'utilisateur par son email
-        const user = await User.findOne({ where: { email } });
+        const user = await User.findOne({
+            where: {
+                email,
+            },
+            include: { association: 'decks', include: 'stats_deck' },
+        });
 
         if (!user) {
-            throw new ApiError('401', { message: 'User or password incorrect' });
+            next(new ApiError(401, { message: 'User or password incorrect' }));
         }
         // Comparer le password avec le password (enregistrer en BDD (hashé))
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            throw new ApiError('401', { message: 'User or password incorrect' });
+            next(new ApiError(401, { message: 'User or password incorrect' }));
         }
         // Créer un objet utilisateur sans le mot de passe
         const userWithoutPassword = {
@@ -53,7 +58,16 @@ const authController = {
         }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIME_EXPIRE }); // La clé secrête et le temps d'expiration du token
 
         // Renvoyer le token et l'utilisateur sans le mot de passe
-        res.status(200).json({ token, user: userWithoutPassword });
+        res.status(200).json({
+            token,
+            user: {
+                id: userWithoutPassword.id,
+                pseudo: userWithoutPassword.pseudo,
+                email: userWithoutPassword.email,
+                decks: user.decks,
+                stats: user.stats_user,
+            },
+        });
     },
 
     async create(req, res) {
@@ -83,11 +97,14 @@ const authController = {
     },
 
     async getOne(req, res) {
+        console.log(req.user);
         res.status(200).json({
             user: {
                 id: req.user.id,
                 pseudo: req.user.pseudo,
                 email: req.user.email,
+                stats: req.user.stats_user,
+                deck: req.user.decks,
             },
         });
     },

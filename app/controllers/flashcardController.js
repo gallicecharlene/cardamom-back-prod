@@ -31,14 +31,13 @@ const flashcardController = {
 
     async create(req, res) {
         const result = flashcardSchema.safeParse(req.body);
-        console.log('result', result.error);
         if (!result.success) {
             throw new ApiError(400, { message: 'invalid data' });
         }
 
+        // Si l'utilisateur n'est pas le propriétaire du deck, retourner une erreur 403 (Forbidden)
         const deckOwner = await Deck.findByPk(result.data.deck_id);
         if (req.user.id !== deckOwner.user_id) {
-            // Si l'utilisateur n'est pas le propriétaire du deck, retourner une erreur 403 (Forbidden)
             throw new ApiError(403, { message: 'You are not allowed to add a card to this deck' });
         }
         const flashcard = await Flashcard.create(result.data);
