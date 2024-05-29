@@ -8,6 +8,7 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
         acquire: 30000, // delai d'attente (30 sec)
         idle: 10000, // delai d'inactivité (10 sec)
     },
+    ssl: true,
     define: {
         underscored: true,
     },
