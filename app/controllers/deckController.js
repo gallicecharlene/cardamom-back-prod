@@ -67,7 +67,7 @@ const deckController = {
             share_id: codeShareId,
         });
 
-        res.status(201).json({ deck });
+        res.status(201).json(deck);
     },
 
     async update(req, res) {

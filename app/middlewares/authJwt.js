@@ -24,6 +24,7 @@ export default async (req, res, next) => {
             where: {
                 id: userId,
             },
+            include: { association: 'decks', include: 'stats_deck' },
 
         });
         console.log('authJWT', user);
